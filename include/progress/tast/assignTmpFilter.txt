@@ -1,0 +1,1 @@
+#[IF,isFirst]#assign#[endIF]##[IF,!isFirst]#      #[endIF]# tmp#[Table.module]#Filter.#[Field.fieldName]# = #[Table.name]#.#[Field.fieldName]##[IF,isLast]#.#[endIF]#

@@ -1,0 +1,2 @@
+public #[Field.name]#Initial:#[Field.inputType]#;
+public #[Field.name]#Final:#[Field.inputType]#;

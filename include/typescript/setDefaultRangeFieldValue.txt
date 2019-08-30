@@ -1,0 +1,2 @@
+this.#[Field.name]#Initial = #[Field.defaultValue]#;
+this.#[Field.name]#Final = #[Field.defaultValue]#;

@@ -1,0 +1,317 @@
+{
+    "openapi": "3.0.1",
+
+    "servers": [
+      {
+        "description": "API para produtos TOTVS",
+        "url": "http://{domain}:{port}/api/#[Table.appModule]#/#[Table.appVersion]#",
+        "variables": {
+          "domain": {
+            "default": "localhost"
+          },
+          "port": {
+            "default": "8080"
+          }
+        }
+      }
+    ],
+  
+    "info": {
+      "description": "API para a entidade #[Table.module]# para produtos TOTVS",
+      "version": "1.000",
+      "title": "#[Table.module]#",
+      "contact": {
+        "name": "T-Talk",
+        "url": "api.totvs.com.br",
+        "email": "comiteintegracao@totvs.com.br"
+      },
+      "x-totvs": {
+        "messageDocumentation": {
+          "name": "#[Table.module]#",
+          "description": "#[Table.description]#",
+          "segment": "Saúde"
+        },
+        "productInformation": [
+            {
+                "product": "GPS",
+                "contact": "TOTVS.SAUDE.GPS.SQUAD.CONTRATOSDOIS@totvs.com.br",
+                "description": "#[Table.pageTitle]#",
+                "adapter": "#[Table.controller,Plural]#.p",
+                "helpUrl": ""
+            }
+        ]
+      }
+    },
+    
+    "paths": {
+        "/#[Table.controller,Plural]##[inlineFields,isKey=true]#/{#[Field.name]#}#[endInlineFields]#": {
+          "get": {
+            "tags": [
+              "#[Table.module]#"
+            ],
+            "summary": "Retorna dados de #[Table.description,Lower]#",
+            "x-totvs": {
+              "productInformation": [
+                {
+                  "product": "GPS",
+                  "available": true,
+                  "note": "Este verbo esta disponivel com todos parametros",
+                  "minimalVersion": "#[Table.minimumVersion]#"
+                }
+              ]
+            },
+            "description": "Retorna dados de #[Table.description,Lower]#",
+            "operationId": "get#[Table.module]#ById",
+            "parameters": [
+#[whileFields,isKey=true]#
+              {
+                "in": "path",
+                "name": "#[Field.name]#",
+                "description": "#[Field.description]#",
+                "required": #[Field.isRequired]#,
+                "schema": {
+                  "type": "#[Field.databaseType,SwaggerType]#"
+                }
+              }#[IF,!isLast]#,#[endIF]#
+#[endWhileFields]#
+            ],
+            "responses": {
+              "200": {
+                "description": "Operação executada com sucesso",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/definitions/#[Table.module]#"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Erro na execução da operação",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/definitions/ErrorModel"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "#[Table.module]#"
+            ],
+            "summary": "Exclui #[Table.description,Lower]#",
+            "x-totvs": {
+              "productInformation": [
+                {
+                  "product": "GPS",
+                  "available": true,
+                  "note": "Este verbo esta disponivel com todos parametros",
+                  "minimalVersion": "#[Table.minimumVersion]#"
+                }
+              ]
+            },
+            "description": "Exclui #[Table.description,Lower]#",
+            "operationId": "remove#[Table.module]#",
+            "parameters": [
+#[whileFields,isKey=true]#
+              {
+                "in": "path",
+                "name": "#[Field.name]#",
+                "description": "#[Field.description]#",
+                "required": #[Field.isRequired]#,
+                "schema": {
+                  "type": "#[Field.databaseType,SwaggerType]#"
+                }
+              }#[IF,!isLast]#,#[endIF]#
+#[endWhileFields]#
+            ],
+            "responses": {
+              "200": {
+                "description": "Operação executada com sucesso"
+              },
+              "500": {
+                "description": "Erro na execução da operação",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/definitions/ErrorModel"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "put": {
+            "tags": [
+              "#[Table.module]#"
+            ],
+            "summary": "Atualiza um registro existente de #[Table.description,Lower]#",
+            "x-totvs": {
+              "productInformation": [
+                {
+                  "product": "GPS",
+                  "available": true,
+                  "note": "Este verbo esta disponivel com todos parametros",
+                  "minimalVersion": "#[Table.minimumVersion]#"
+                }
+              ]
+            },
+            "description": "Atualiza um registro existente de #[Table.description,Lower]#",
+            "operationId": "update#[Table.module]#",
+            "parameters": [
+#[whileFields,isKey=true]#
+              {
+                "in": "path",
+                "name": "#[Field.name]#",
+                "description": "#[Field.description]#",
+                "required": #[Field.isRequired]#,
+                "schema": {
+                  "type": "#[Field.databaseType,SwaggerType]#"
+                }
+              }#[IF,!isLast]#,#[endIF]#
+#[endWhileFields]#
+            ],
+            "requestBody": {
+              "description": "Objeto para atualizar o registro de #[Table.description,Lower]#",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/definitions/#[Table.module]#"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Operação executada com sucesso"
+              },
+              "500": {
+                "description": "Erro na execução da operação",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/definitions/ErrorModel"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/#[Table.controller,Plural]#": {
+          "get": {
+            "tags": [
+              "#[Table.module]#"
+            ],
+            "summary": "Busca dados de #[Table.description,Lower]# existentes",
+            "x-totvs": {
+              "productInformation": [
+                {
+                  "product": "GPS",
+                  "available": true,
+                  "note": "Este verbo esta disponivel com todos parametros",
+                  "minimalVersion": "#[Table.minimumVersion]#"
+                }
+              ]
+            },
+            "description": "Busca dados de #[Table.description,Lower]# existentes",
+            "operationId": "get#[Table.module]#ByFilter",
+            "parameters": [
+#[whileFields,isFilter=true|isRangeFilter=true]#
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/parameters/#[Field.name]#Initial"
+              },
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/parameters/#[Field.name]#Final"
+              },
+#[endWhileFields]#
+#[whileFields,isFilter=true|isRangeFilter=false]#
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/parameters/#[Field.name]#"
+              },
+#[endWhileFields]#
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/parameters/Order"
+              },
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/parameters/Page"
+              },
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/parameters/PageSize"
+              },          
+              {
+                "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/parameters/Fields"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Operação executada com sucesso",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/definitions/Paged#[Table.module]#"
+                    }
+                  }
+                }
+              },
+              "500": {
+                "description": "Erro na execução da operação",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/definitions/ErrorModel"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "#[Table.module]#"
+            ],
+            "summary": "Inclui um novo registro de #[Table.description,Lower]#",
+            "x-totvs": {
+              "productInformation": [
+                {
+                  "product": "GPS",
+                  "available": true,
+                  "note": "Este verbo esta disponivel com todos parametros",
+                  "minimalVersion": "#[Table.minimumVersion]#"
+                }
+              ]
+            },
+            "description": "Inclui um novo registro de #[Table.description,Lower]#",
+            "operationId": "create#[Table.module]#",
+            "requestBody": {
+              "description": "Objeto para atualizar o registro de #[Table.description,Lower]#",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#/definitions/#[Table.module]#"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Operação executada com sucesso"
+              },
+              "500": {
+                "description": "Erro na execução da operação",
+                "content": {
+                  "application/json": { 
+                    "schema": {
+                      "$ref": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/master/jsonschema/apis/types/totvsApiTypesBase.json#/definitions/ErrorModel"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+    }
+ }

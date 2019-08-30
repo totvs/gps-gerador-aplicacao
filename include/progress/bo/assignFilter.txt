@@ -1,0 +1,3 @@
+if  (tmp#[Table.module]#Filter.#[Field.fieldName]# <> ?)
+and (tmp#[Table.module]#Filter.#[Field.fieldName]# #[IF,databaseType=character]#<> ""#[endIF]##[IF,!databaseType=character]# > 0#[endIF]#)
+then assign ds-query-aux = appendQueryAND("#[Field.fieldName]# #[IF,!databaseType=character]#= " + string(tmp#[Table.module]#Filter.#[Field.fieldName]#)#[endIF]##[IF,databaseType=character]#begins '" + replace(tmp#[Table.module]#Filter.#[Field.fieldName]#, "'", "") + "'"#[endIF]#, ds-query-aux, lg-primeira-condicao-aux).

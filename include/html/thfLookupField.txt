@@ -1,0 +1,15 @@
+<div class="thf-row">
+    <thf-lookup 
+      name="#[Field.name]#"
+      class="thf-md-4"
+      t-label="#[Field.description]#"
+      t-required="#[Field.isRequired]#"
+      [t-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
+      [(ngModel)]="#[Table.controller]#.#[Field.name]#"
+      [t-columns]="#[Field.zoomComponent,controllerName]#Zoom.COLUMNS"
+      [t-filter-service]="#[Field.zoomComponent,controllerName]#Zoom"
+      [t-field-label]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_LABEL"
+      [t-field-value]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_VALUE"
+      ngDefaultControl>
+    </thf-lookup>
+  </div>

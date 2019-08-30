@@ -1,0 +1,1 @@
+field #[Field.fieldName,MaxAttributeSize]# as #[Field.databaseType]# serialize-name "#[Field.name]#"#[IF,isLast]#.#[endIF]#

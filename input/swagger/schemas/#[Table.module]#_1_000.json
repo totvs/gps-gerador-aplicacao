@@ -1,0 +1,109 @@
+{
+    "$schema": "https://raw.githubusercontent.com/totvs/ttalk-standard-message/#[Table.module]#/#[Table.appVersion,Upper]#/1_000/jsonschema/schemas/#[Table.module]#_1_000.json#",
+
+    "info": {
+      "description": "API para a entidade #[Table.module]# para produtos TOTVS",
+      "version": "1.000",
+      "title": "#[Table.module]#",
+      "contact": {
+        "name": "T-Talk",
+        "url": "api.totvs.com.br",
+        "email": "comiteintegracao@totvs.com.br"
+      },
+      "x-totvs": {
+        "messageDocumentation": {
+          "name": "#[Table.module]#",
+          "description": "#[Table.description]#",
+          "segment": "Saúde"
+        },
+        "productInformation": [
+            {
+                "product": "GPS",
+                "contact": "TOTVS.SAUDE.GPS.SQUAD.CONTRATOSDOIS@totvs.com.br",
+                "description": "#[Table.pageTitle]#",
+                "adapter": "#[Table.controller,Plural]#.p",
+                "helpUrl": ""
+            }
+        ]
+      }
+    },
+    
+    "definitions": {
+      "Paged#[Table.module]#": {
+        "type": "object",
+        "properties": {
+          "items": {
+          "type": "array",
+            "items": {
+              "$ref": "#/definitions/#[Table.module]#"
+            }
+          },
+          "hasNext": {
+            "type": "boolean"
+          }
+        }
+      },
+      "#[Table.module]#": {
+        "type": "object",
+        "description": "#[Table.description]#",
+        "required": [
+#[whileFields,isRequired=true]#
+          "#[Field.name]#"#[IF,!isLast]#,#[endIF]#
+#[endWhileFields]#
+        ],
+        "properties": {
+#[whileFields,isVisible=true]#
+          "#[Field.name]#": {
+            "description": "#[Field.description]#",
+            "type": "#[Field.databaseType,SwaggerType]#",
+            "x-totvs": [
+              {
+                "product": "GPS",
+                "field": "#[Table.name]#.#[Field.fieldName]#",
+                "required": #[Field.isRequired]#,
+                "type": "#[Field.databaseType]#",
+                "note": "#[Field.description]#",
+                "available": true,
+                "canUpdate": #[IF,fixedValue=]##[Field.isEditable]##[endIF]##[IF,!fixedValue=]#false#[endIF]#
+              }
+            ]
+          }#[IF,!isLast]#,#[endIF]#
+#[endWhileFields]#
+        }
+      }
+    },
+	
+    "parameters": {
+#[whileFields,isFilter=true|isRangeFilter=true]#
+      "#[Field.name]#Initial": {
+        "name": "#[Field.name]#Initial",
+        "description": "#[Field.description]# inicial",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "#[Field.databaseType,SwaggerType]#"
+        }
+      },
+      "#[Field.name]#Final": {
+        "name": "#[Field.name]#Final",
+        "description": "#[Field.description]# final",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "#[Field.databaseType,SwaggerType]#"
+        }
+      },
+#[endWhileFields]#
+#[whileFields,isFilter=true|isRangeFilter=false]#
+      "#[Field.name]#": {
+        "name": "#[Field.name]#",
+        "description": "#[Field.description]#",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "#[Field.databaseType,SwaggerType]#"
+        }
+      }#[IF,!isLast]#,#[endIF]#
+#[endWhileFields]#
+    }
+ }

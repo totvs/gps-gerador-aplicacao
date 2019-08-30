@@ -1,0 +1,13 @@
+<div class="thf-row">
+    <thf-switch
+        class="thf-md-3"
+        name="#[Field.name]#"
+        t-label-off="Não"
+        t-label-on="Sim"
+        t-label="#[Field.description]#"
+        t-required="#[Field.isRequired]#"
+        [t-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
+        [(ngModel)]="#[Table.controller]#.#[Field.name]#"
+        ngDefaultControl>
+    </thf-switch>
+</div>

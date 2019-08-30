@@ -1,0 +1,2 @@
+field #[Field.fieldName]#-ini as #[Field.databaseType]# serialize-name "#[Field.name]#Initial"
+field #[Field.fieldName]#-fim as #[Field.databaseType]# serialize-name "#[Field.name]#Final"#[IF,isLast]#.#[endIF]#

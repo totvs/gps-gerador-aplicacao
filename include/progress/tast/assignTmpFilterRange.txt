@@ -1,0 +1,2 @@
+#[IF,isFirst]#assign#[endIF]##[IF,!isFirst]#      #[endIF]# tmp#[Table.module]#Filter.#[Field.fieldName]#-ini = #[Table.name]#.#[Field.fieldName]#
+       tmp#[Table.module]#Filter.#[Field.fieldName]#-fim = #[Table.name]#.#[Field.fieldName]##[IF,isLast]#.#[endIF]#

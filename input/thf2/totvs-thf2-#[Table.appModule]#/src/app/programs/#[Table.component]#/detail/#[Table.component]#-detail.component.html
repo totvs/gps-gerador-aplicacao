@@ -1,0 +1,13 @@
+<thf-page-detail
+    t-title="Detalhes do #[Table.description]#">
+    #[whileFields]#
+	#[IF,isOdd]#<div class="thf-row">#[endIF]#
+    <thf-info
+        class="thf-md-4"
+        t-label="#[Field.description]#"        
+        [t-value]="#[Table.controller]#.#[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]##[IF,databaseType=date|zoomComponent=|enumComponent=]# | dateFormat#[endIF]##[IF,databaseType=logical|zoomComponent=|enumComponent=]# | booleanFormat#[endIF]#"
+        >
+    </thf-info>
+	#[IF,isEven]#</div>#[endIF]##[IF,!isEven|isLast]#</div>#[endIF]##[IF,isEven|!isLast]#<br />#[endIF]#
+    #[endWhileFields]#
+</thf-page-detail>

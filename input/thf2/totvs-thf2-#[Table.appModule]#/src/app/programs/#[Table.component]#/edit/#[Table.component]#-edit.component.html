@@ -1,0 +1,12 @@
+<thf-page-edit t-title="#[Table.description]#">
+  <thf-loading-overlay
+    t-screen-lock="true"
+    [t-text]="loadingStatus.message"
+    [hidden]="!loadingStatus.active">
+  </thf-loading-overlay>
+  <form #f="ngForm">
+    #[whileFields,fixedValue=]#
+    *[html/thfTextAreaField.txt,inputComponent=TextArea]**[html/thfLookupField.txt,!zoomComponent=]**[html/thfComboField.txt,!enumComponent=]**[html/thfNumberField.txt,inputType=Number|enumComponent=|zoomComponent=|inputComponent=]**[html/thfSwitchField.txt,inputType=Boolean|enumComponent=|zoomComponent=|inputComponent=]**[html/thfInputField.txt,inputType=String|enumComponent=|zoomComponent=|inputComponent=]*
+    #[endWhileFields]#
+  </form>
+</thf-page-edit>

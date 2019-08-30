@@ -1,0 +1,228 @@
+swagger: "2.0"
+info:
+  description: "API para a entidade #[Table.module]# para produtos TOTVS"
+  version: "1.0.0"
+  title: "#[Table.module]#"
+  contact:
+    name: "T-Talk"
+    url: "http://api.totvs.com.br"
+    email: "comiteintegracao@totvs.com.br"
+  x-totvs:
+    messageDocumentation:
+      name: "#[Table.module]#"
+      description: "#[Table.description]#"
+      segment: "Healthcare"
+    productInformation:
+    - gps:
+        contact: "TOTVS.SAUDE.GPS.SQUAD.CONTRATOSDOIS@totvs.com.br"
+        description: "#[Table.pageTitle]#"
+        adapter: "#[Table.controller,Plural]#.p"
+        helpUrl: ""
+#host: ""
+basePath: "/#[Table.appModule]#/#[Table.appVersion]#"
+consumes: 
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /#[Table.controller,Plural]##[inlineFields,isKey=true]#/{#[Field.name]#}#[endInlineFields]#:
+    get:
+      tags:
+      - "#[Table.module]#"
+      summary: "Retorna dados de #[Table.description,Lower]#"
+      x-totvs:
+        productInformation:
+        - gps:
+            available: true
+            note: "Este verbo esta disponivel com todos parametros"
+            minimalVersion: "#[Table.minimumVersion]#"
+      description: "Retorna dados de #[Table.description,Lower]#"
+      operationId: "get#[Table.module]#ById"
+      produces:
+      - "application/json"
+      parameters:
+#[whileFields,isKey=true]#
+      - in: "path"
+        name: "#[Field.name]#"
+        description: "#[Field.description]#"
+        required: #[Field.isRequired]#
+        type: #[Field.databaseType,SwaggerType]#
+#[endWhileFields]#
+      responses:
+        200:
+          description: "Operação executada com sucesso"
+          schema:
+            $ref: "#/definitions/#[Table.module]#"
+        500:
+          description: "Ocorreu um erro na execução da operação" 
+          schema:
+            $ref: "#/definitions/ReturnError"
+    put:
+      tags:
+      - "#[Table.module]#"
+      summary: "Inclui um novo registro de #[Table.description,Lower]#"
+      x-totvs:
+        productInformation:
+        - gps:
+            available: true
+            note: "Este verbo esta disponivel com todos parametros"
+            minimalVersion: "#[Table.minimumVersion]#"
+      description: "Atualiza um registro existente de #[Table.description,Lower]#"
+      operationId: "update#[Table.module]#"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+#[whileFields,isKey=true]#
+      - in: "path"
+        name: "#[Field.name]#"
+        description: "#[Field.description]#"
+        required: #[Field.isRequired]#
+        type: #[Field.databaseType,SwaggerType]#
+#[endWhileFields]#
+      - in: "body"
+        name: #[Table.controller]#
+        description: "Parâmetros necessários enviados no 'payload' para atualizar o registro de #[Table.description,Lower]#"
+        required: true
+        schema:
+          $ref: "#/definitions/#[Table.module]#"
+      responses:
+        200:
+          description: "Operação executada com sucesso" 
+        500:
+          description: "Ocorreu um erro na execução da operação" 
+          schema:
+            $ref: "#/definitions/ReturnError"
+    delete:
+      tags:
+      - "#[Table.module]#"
+      summary: "Exclui #[Table.description,Lower]#"
+      x-totvs:
+        productInformation:
+        - gps:
+            available: true
+            note: "Este verbo esta disponivel com todos parametros"
+            minimalVersion: "#[Table.minimumVersion]#"
+      description: "Exclui #[Table.description,Lower]#"
+      operationId: "remove#[Table.module]#"
+      produces:
+      - "application/json"
+      parameters:
+#[whileFields,isKey=true]#
+      - in: "path"
+        name: "#[Field.name]#"
+        description: "#[Field.description]#"
+        required: #[Field.isRequired]#
+        type: #[Field.databaseType,SwaggerType]#
+#[endWhileFields]#
+      responses:
+        204:
+          description: "Operação executada com sucesso."
+        500:
+          description: "Ocorreu um erro na execução da operação" 
+          schema:
+            $ref: "#/definitions/ReturnError" 
+  /#[Table.controller,Plural]#:
+    get:
+      tags:
+      - "#[Table.module]#"
+      summary: "Busca dados de #[Table.description,Lower]# existentes"
+      x-totvs:
+        productInformation:
+        - gps:
+            available: true
+            note: "Este verbo esta disponivel com todos parametros"
+            minimalVersion: "#[Table.minimumVersion]#"
+      description: "Busca dados de #[Table.description,Lower]# existentes"
+      operationId: "get#[Table.module]#ByFilter"    
+      produces:
+      - "application/json"
+      parameters:
+#[whileFields,isFilter=true|isRangeFilter=true]#
+      - in: "query"
+        name: "#[Field.name]#Initial"
+        required: false
+        type: #[Field.databaseType,SwaggerType]#
+        description: "#[Field.description]# Inicial"
+      - in: "query"
+        name: "#[Field.name]#Final"
+        required: false
+        type: #[Field.databaseType,SwaggerType]#
+        description: "#[Field.description]# Final"
+#[endWhileFields]#
+#[whileFields,isFilter=true|isRangeFilter=false]#
+      - in: "query"
+        name: "#[Field.name]#"
+        required: false
+        type: #[Field.databaseType,SwaggerType]#
+        description: "#[Field.description]#"
+#[endWhileFields]#
+      responses:
+        200:
+          description: "Operação executada com sucesso"
+          schema:
+            $ref: "#/definitions/#[Table.module]#"
+        500:
+          description: "Ocorreu um erro na execução da operação" 
+          schema:
+            $ref: "#/definitions/ReturnError"
+    post:
+      tags:
+      - "#[Table.module]#"
+      summary: "Inclui um novo registro de #[Table.description,Lower]#"
+      x-totvs:
+        productInformation:
+        - gps:
+            available: true
+            note: "Este verbo esta disponivel com todos parametros"
+            minimalVersion: "#[Table.minimumVersion]#"
+      description: "Inclui um novo registro de #[Table.description,Lower]#"
+      operationId: "create#[Table.module]#"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: #[Table.controller]#
+        description: "Parâmetros necessários enviados no 'payload' para adicionar o registro de #[Table.description,Lower]#"
+        required: true
+        schema:
+          $ref: "#/definitions/#[Table.module]#"
+      responses:
+        200:
+          description: "Operação executada com sucesso" 
+        500:
+          description: "Ocorreu um erro na execução da operação" 
+          schema:
+            $ref: "#/definitions/ReturnError" 
+definitions:
+  ReturnError:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "Código de erro, alerta ou aviso"
+      message: 
+        type: "string"
+        description: "Mensagem de erro, alerta ou aviso"
+      detailMessage: 
+        type: "string"
+        description: "Descrição detalhada da mensagem de retorno"
+  #[Table.module]#:
+    type: "object"
+    properties:
+#[whileFields,isVisible=true]#
+      #[Field.name]#:
+        type: #[Field.databaseType,SwaggerType]#
+        description: "#[Field.description]#"
+        x-totvs:
+        - gps:
+            field: "#[Table.name]#.#[Field.fieldName]#"
+            required: #[Field.isRequired]#
+            type: #[Field.databaseType]#
+            note: "#[Field.description]#"
+            available: true
+            canUpdate: #[IF,fixedValue=]##[Field.isEditable]##[endIF]##[IF,!fixedValue=]#false#[endIF]#
+#[endWhileFields]#
