@@ -852,6 +852,8 @@ procedure formatProgressCast:
     then assign texto = "decimal".
     else if texto begins "log"
     then assign texto = "logical".
+    else if texto begins "date"
+    then assign texto = "changeISOToDate".
     else assign texto = "string".
 end procedure.
 
