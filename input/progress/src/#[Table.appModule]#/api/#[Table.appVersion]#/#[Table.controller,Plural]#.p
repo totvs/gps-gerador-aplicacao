@@ -150,8 +150,10 @@ procedure create#[Table.module]#:
 
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
+
+    assign json#[Table.module]# = oGpsJsonUtils:getJsonObjectFromTable(temp-table tmp#[Table.module]#:default-buffer-handle).
     
-    run createJsonResponse(new JsonObject(), input table RowErrors, input false, output jsonOutput). 
+    run createJsonResponse(json#[Table.module]#, input table RowErrors, input false, output jsonOutput). 
 
 end.
 
@@ -178,7 +180,9 @@ procedure update#[Table.module]#:
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
     
-    run createJsonResponse(new JsonObject(), input table RowErrors, input false, output jsonOutput). 
+    assign json#[Table.module]# = oGpsJsonUtils:getJsonObjectFromTable(temp-table tmp#[Table.module]#:default-buffer-handle).
+
+    run createJsonResponse(json#[Table.module]#, input table RowErrors, input false, output jsonOutput). 
 
 end procedure.
 
