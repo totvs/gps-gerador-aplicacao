@@ -1,46 +1,47 @@
 import { Injectable } from '@angular/core';
 import { TotvsGpsServices, TTalkCollection } from 'totvs-gps-services';
-import { #[Table.module]# } from '../models/#[Table.component]#';
+import { #[Table.module]#, I#[Table.module]#Filter } from '../models/#[Table.component]#';
 
 @Injectable()
 export class #[Table.module]#Service {
-  
-    private _url = '#[Table.appModule]#/#[Table.appVersion]#/#[Table.controller,Plural]#';
-    private _urlKeys = this._url
-#[whileFields,isKey=true]# 
-        + '/{{#[Field.name]#}}'
-#[endWhileFields]#
-        ;
 
-    public get#[Table.module]#ByFilter(searchObject?:any,pageNumber?:number,pageSize?:number,fields?:Array<string>,expand?:Array<string>): Promise<TTalkCollection<#[Table.module]#>> {
-        return TotvsGpsServices
-            .getInstance<#[Table.module]#>(#[Table.module]#, this._url)
-            .setQueryParams(searchObject)
-            .setPage(pageNumber).setPageSize(pageSize).setFields(fields).setExpand(expand)
-            .getCollection();
+  private readonly url = '#[Table.appModule]#/#[Table.appVersion]#/#[Table.controller,Plural]#';
+  private readonly urlKeys = `${this.url}#[inlineFields,isKey=true]#/{{#[Field.name]#}}#[endInlineFields]#`;
+
+  getByFilter(search:I#[Table.module]#Filter,pageNumber?:number,pageSize?:number,expand?:string[],fields?:string[]): Promise<TTalkCollection<#[Table.module]#>> {
+    return TotvsGpsServices
+      .getInstance<#[Table.module]#>(#[Table.module]#, this.url)
+      .setQueryParams(search)
+      .setPage(pageNumber).setPageSize(pageSize).setFields(fields).setExpand(expand)
+      .getCollection();
     }
 
-    public get#[Table.module]#ById(#[Table.controller]#:#[Table.module]#,fields?:Array<string>,expand?:Array<string>): Promise<#[Table.module]#> {
-        return TotvsGpsServices
-            .getInstance<#[Table.module]#>(#[Table.module]#, this._urlKeys)
-            .setPathParams(#[Table.controller]#)
-            .setFields(fields).setExpand(expand)
-            .get();
-    }
+  get(#[inlineFields,isKey=true]##[Field.name]#,#[endInlineFields]#expand?:string[],fields?:string[]): Promise<#[Table.module]#> {
+    return TotvsGpsServices
+      .getInstance<#[Table.module]#>(#[Table.module]#, this.urlKeys)
+      .setPathParams({#[inlineFields,isKey=true]##[Field.name]#:#[Field.name]##[IF,!isLast]#, #[endIF]##[endInlineFields]#})
+      .setFields(fields).setExpand(expand)
+      .get();
+  }
 
-    public remove(#[Table.controller]#:#[Table.module]#): Promise<any> {
-        return TotvsGpsServices
-            .getInstance(#[Table.module]#, this._urlKeys)
-            .setPathParams(#[Table.controller]#)
-            .delete();
-    }
+  remove(#[inlineFields,isKey=true]##[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#): Promise<any> {
+    return TotvsGpsServices
+      .getInstance(#[Table.module]#, this.urlKeys)
+      .setPathParams({#[inlineFields,isKey=true]##[Field.name]#:#[Field.name]##[IF,!isLast]#, #[endIF]##[endInlineFields]#})
+      .delete();
+  }
 
-    public save(#[Table.controller]#: #[Table.module]#, isNew:boolean): Promise<#[Table.module]#> {
-        let result = TotvsGpsServices.getInstance<#[Table.module]#>(#[Table.module]#);
-        if (isNew)
-            return result.post(#[Table.controller]#, this._url);
-        else
-            return result.setPathParams(#[Table.controller]#).put(#[Table.controller]#, this._urlKeys);
-    }
+  insert(#[Table.controller]#: #[Table.module]#): Promise<#[Table.module]#> {
+    return TotvsGpsServices
+      .getInstance<#[Table.module]#>(#[Table.module]#)
+      .post(#[Table.controller]#, this.url);
+  }
+
+  update(#[Table.controller]#: #[Table.module]#): Promise<#[Table.module]#> {
+    return TotvsGpsServices
+      .getInstance<#[Table.module]#>(#[Table.module]#)
+      .setPathParams(#[Table.controller]#)
+      .put(#[Table.controller]#, this.urlKeys);
+  }
 
 }

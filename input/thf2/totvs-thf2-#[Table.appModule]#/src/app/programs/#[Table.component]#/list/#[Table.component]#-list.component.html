@@ -1,27 +1,28 @@
-<thf-page-list
-    [t-title]="pageTitle"
-    [t-actions]="listActions"
-    [t-filter]="filterSettings">
-    <thf-table
-        t-sort="false"
-        t-striped="true"        
-        [t-actions]="tableActions"
-        [t-columns]="tableColumns"
-        [t-items]="objectList"
-        [t-show-more-disabled]="!hasNext"
-        (t-show-more)="showMoreFunction()"
-        [t-no-data]="tableMessage"
-        [t-loading]="isWaiting">
-    </thf-table>        
-</thf-page-list>
+<gps-page-list #gpsPageList
+    [p-title]="pageTitle"
+    [p-actions]="pageActions"
+    [disclaimer-config]="pageDisclaimerConfig"
+    [(filter)]="filter"
+    (on-search)="applySimpleFilter($event)"
+    (on-advanced-search)="applyAdvancedFilter($event)"
+    (before-advanced-search)="restoreAdvancedFilterDefaults()">
+    <div class="po-row">
+        <po-table 
+            class="po-md-12"
+            p-striped
+            [p-actions]="listActions"
+            [p-columns]="listColumns"
+            [p-items]="listItems"
+            [p-show-more-disabled]="!listHasNext"
+            (p-show-more)="onShowMore($event)">
+        </po-table>
 
-<thf-modal
-    [t-title]="advancedFilterTitle"
-    [t-primary-action]="applyFilterAction"
-    [t-secondary-action]="closeModalAction">
-
-    #[whileFields,isFilter=true]#           
-    *[html/advancedFilterInputRangeField.txt,isRangeFilter=true]**[html/advancedFilterInputField.txt,isRangeFilter=false]*
-    #[endWhileFields]#
-  
-</thf-modal>
+        <ng-template gps-advanced-search>
+            <div class="po-row">
+                #[whileFields,isFilter=true]#           
+                *[html/advancedFilterInputRangeField.txt,isRangeFilter=true]**[html/advancedFilterInputField.txt,isRangeFilter=false]*
+                #[endWhileFields]#
+            </div>
+        </ng-template>
+    </div>
+</gps-page-list>

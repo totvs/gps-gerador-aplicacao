@@ -1,15 +1,15 @@
-<div class="thf-row">
-    <thf-lookup 
-      name="#[Field.name]#"
-      class="thf-md-4"
-      t-label="#[Field.description]#"
-      t-required="#[Field.isRequired]#"
-      [t-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
-      [(ngModel)]="#[Table.controller]#.#[Field.name]#"
-      [t-columns]="#[Field.zoomComponent,controllerName]#Zoom.COLUMNS"
-      [t-filter-service]="#[Field.zoomComponent,controllerName]#Zoom"
-      [t-field-label]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_LABEL"
-      [t-field-value]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_VALUE"
-      ngDefaultControl>
-    </thf-lookup>
-  </div>
+<div class="po-row">
+    <po-lookup 
+        name="#[Field.name]#"
+        class="po-md-4"
+        p-label="#[Field.description]#"
+        p-required="#[Field.isRequired]#"
+        [p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
+        [(ngModel)]="#[Table.controller]#.#[Field.name]#"
+        [p-columns]="#[Field.zoomComponent,controllerName]#Zoom.COLUMNS"
+        [p-filter-service]="#[Field.zoomComponent,controllerName]#Zoom"
+        [p-field-label]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_LABEL"
+        [p-field-value]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_VALUE"
+        ngDefaultControl>
+    </po-lookup>
+</div>

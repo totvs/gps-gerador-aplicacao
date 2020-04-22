@@ -1,6 +1,8 @@
 ESTE ARQUIVO DEVE SER ATUALIZADO NO ANGULAR.JSON DO PROJETO
 O OBJETO ABAIXO DEVE SER ADICIONADO AO ATRIBUTO "projects"
 
+ALTERE A PASTA /bootstrap PELA PASTA PADRAO DO PROJETO
+
 	
   "projects": {
     "#[Table.component]#": {
@@ -13,7 +15,7 @@ O OBJETO ABAIXO DEVE SER ADICIONADO AO ATRIBUTO "projects"
           "options": {
             "outputPath": "dist/#[Table.component]#",
             "index": "src/index.html",
-            "main": "src/pub-config/main-#[Table.component]#.ts",
+            "main": "src/bootstrap/main-#[Table.component]#.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
@@ -21,7 +23,7 @@ O OBJETO ABAIXO DEVE SER ADICIONADO AO ATRIBUTO "projects"
               "src/favicon.ico"
             ],
             "styles": [
-              "node_modules/@totvs/thf-theme/css/thf-theme-default.min.css",
+              "node_modules/@totvs/portinari-theme/css/po-theme-default.min.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -72,7 +74,7 @@ O OBJETO ABAIXO DEVE SER ADICIONADO AO ATRIBUTO "projects"
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
             "styles": [
-              "node_modules/@totvs/thf-theme/css/thf-theme-default.min.css",
+              "node_modules/@totvs/portinari-theme/css/po-theme-default.min.css",
               "src/styles.css"
             ],
             "assets": [

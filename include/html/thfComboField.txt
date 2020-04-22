@@ -1,12 +1,12 @@
-<div class="thf-row">
-    <thf-combo
-      name="#[Field.name]#"
-      class="thf-md-4"
-      t-label="#[Field.description]#"
-      t-required="#[Field.isRequired]#"
-      [t-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
-      [(ngModel)]="#[Table.controller]#.#[Field.name]#"
-      [t-options]="#[Field.enumComponent,ControllerName]#Options"
-      ngDefaultControl>
-    </thf-combo>
-  </div>
+<div class="po-row">
+    <po-combo
+        name="#[Field.name]#"
+        class="po-md-4"
+        p-label="#[Field.description]#"
+        p-required="#[Field.isRequired]#"
+        [p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
+        [(ngModel)]="#[Table.controller]#.#[Field.name]#"
+        [p-options]="#[Field.enumComponent,ControllerName]#Options"
+        ngDefaultControl>
+    </po-combo>
+</div>
