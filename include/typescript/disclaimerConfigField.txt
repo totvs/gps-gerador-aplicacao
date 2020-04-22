@@ -1,0 +1,1 @@
+{ label: '#[Field.description]#', property: '#[Field.name]#'#[IF,databaseType=date]#, type: 'date'#[endIF]##[IF,!enumComponent=]#, value: this.get#[Field.enumComponent,ModuleName]#Description#[endIF]# },

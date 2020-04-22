@@ -1,20 +1,17 @@
-import { ThfDialogService } from '@totvs/thf-ui/services/thf-dialog/thf-dialog.service';
-import { ThfNotificationService } from '@totvs/thf-ui/services/thf-notification/thf-notification.service';
 import { Router } from '@angular/router';
-
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ThfTableColumn, ThfTableAction } from '@totvs/thf-ui/components/thf-table';
-import { PoPageAction, PoPageFilter } from '@totvs/thf-ui/components/thf-page';
+import { isNullOrUndefined } from 'util';
+import { PoDialogService, PoNotificationService, PoPageAction, PoTableColumn, PoTableAction, PoSelectOption } from '@portinari/portinari-ui';
+import { GpsPageListComponent, IDisclaimerConfig } from 'totvs-gps-controls';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]#, I#[Table.module]#Filter } from '../models/#[Table.component]#';
 import { #[Table.module]#Extended } from '../models/#[Table.component]#-extended';
-import { TTalkCollection } from 'totvs-gps-services';
 #[whileFields,!enumComponent=]#
-import { #[Field.enumComponent,ModuleName]#Enum } from '../../../shared/enum/#[Field.enumComponent]#.enum';
+import { #[Field.enumComponent,ModuleName]#Enum } from '../enum/#[Field.enumComponent]#.enum';
 #[endWhileFields]#
 #[whileFields,!zoomComponent=]#
-import { #[Field.zoomComponent,ModuleName]# } from '../../../shared/models/#[Field.zoomComponent]#';
-import { #[Field.zoomComponent,ModuleName]#Service } from '../../../shared/services/#[Field.zoomComponent]#.service';
+import { #[Field.zoomComponent,ModuleName]# } from '../models/#[Field.zoomComponent]#';
+import { #[Field.zoomComponent,ModuleName]#Zoom } from '../zoom/#[Field.zoomComponent]#.zoom';
 #[endWhileFields]#
 
 @Component({
@@ -40,33 +37,26 @@ export class #[Table.module]#ListComponent implements OnInit {
   listHasNext: boolean;
   listColumns: PoTableColumn[] = [
     #[whileFields,isListable=true]#    
-    { property: '#[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]#', label: '#[Field.description]#' #[IF,databaseType=logical|enumComponent=]#, type: 'boolean'#[endIF]##[IF,databaseType=date|enumComponent=]#, type: 'date'#[endIF]##[IF,isLink=true]#, type: 'link', action: (value, row) => { this.onDetail(row); }#[endIF]#},
+    { property: '#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]#', label: '#[Field.description]#' #[IF,databaseType=logical|enumComponent=]#, type: 'boolean'#[endIF]##[IF,databaseType=date|enumComponent=]#, type: 'date'#[endIF]##[IF,isLink=true]#, type: 'link', action: (value, row) => { this.onDetail(row); }#[endIF]#},
     #[endWhileFields]#   
   ];
   listActions: PoTableAction[] = [
-    { label: 'Editar', action: this.onEdit.bind(this) },    
-    { label: 'Remover', action: this.onRemove.bind(this) }
+    { label: 'Editar', action: this.onEdit.bind(this), icon: 'po-icon-edit' },    
+    { label: 'Remover', action: this.onRemove.bind(this), icon: 'po-icon-delete', type: 'danger' }
   ];
   //#endregion
 
-  //#region Zooms
-  // TODO
-  #[whileFields,!zoomComponent=]#
-  private #[Field.zoomComponent,ControllerName]#List: Array<#[Field.zoomComponent,ModuleName]#> = [];
+  //#region Enumeradores
+  #[whileFields,!enumComponent=]#
+  #[Field.enumComponent,ControllerName]#Options: PoSelectOption[];
   #[endWhileFields]#
   //#endregion
 
-  //#region Enumeradores
-  // TODO
-  // movementTypeOptions: PoSelectOption[] = [];
-  // statusOptions: PoSelectOption[] = [];
-  //#endregion
-
   constructor(
-    private #[Table.controller]#Service:#[Table.module]#Service,
     #[whileFields,!zoomComponent=]#
-    private #[Field.zoomComponent,ControllerName]#Service: #[Field.zoomComponent,ModuleName]#Service,
+    public #[Field.zoomComponent,ControllerName]#Zoom: #[Field.zoomComponent,ModuleName]#Zoom,
     #[endWhileFields]#
+    private service:#[Table.module]#Service,
     private router:Router,
     private dialogService:PoDialogService,
     private notificationService:PoNotificationService
@@ -90,33 +80,18 @@ export class #[Table.module]#ListComponent implements OnInit {
   }
 
   private initEnums() {
-    // TODO
-    // this.movementTypeOptions = [
-    //   { value: '', label: 'Todos' },
-    //   ...SibMovementTypeEnum.SibMovementTypes
-    // ];
-    // this.statusOptions = [
-    //   { value: 0, label: 'Todos' },
-    //   ...SibMovementStatusEnum.SibMovementStatus
-    // ];
+    #[whileFields,!enumComponent=]#
+    this.#[Field.enumComponent,ControllerName]#Options = [...#[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,ModuleName]#];
+    #[endWhileFields]#
   }
 
   private disclaimersConfig() {
-    return null;
-    // TODO
-    // return <IDisclaimerConfig[]> [
-    //   { label: 'Pesquisa por', property: 'q' },
-    //   { label: 'Carteira', property: 'cardNumber' },
-    //   { label: 'CCO', property: 'operationalCode', type: 'number' },
-    //   { label: 'CPF', property: 'taxpayerRegistry' },
-    //   { label: 'Data', property: 'startDate', type: 'date', group: 'data', value: (v) => { return `de ${v}` } },
-    //   { label: 'Data', property: 'endDate', type: 'date', group: 'data', separator: ' ', value: (v) => { return `até ${v}` } },
-    //   { label: 'Tipo', property: 'movementType', type: 'number', value: this.getTypeDescription },
-    //   { label: 'Situação', property: 'status', type: 'number', value: this.getStatusDescription },
-    //   { label: 'Modalidade', property: 'modality', type: 'number', group: 'benef', separator: '/' },
-    //   { label: 'Proposta', property: 'proposal', type: 'number', group: 'benef', separator: '/' },
-    //   { label: 'Beneficiário', property: 'beneficiary', type: 'number', group: 'benef', separator: '/' },
-    // ];
+    return <IDisclaimerConfig[]> [
+      { label: 'Pesquisa por', property: 'q' },
+      #[whileFields,isFilter=true]#
+      *[typescript/disclaimerConfigRangeField.txt,isRangeFilter=true]**[typescript/disclaimerConfigField.txt,isRangeFilter=false]*
+      #[endWhileFields]#
+    ];
   }
 
   private defaults() {
@@ -134,12 +109,7 @@ export class #[Table.module]#ListComponent implements OnInit {
   }
 
   applySimpleFilter(text) {
-    if ((text || '').length == 0) {
-      // pesquisa o padrao
-      this.filter = this.defaults().filter;
-      this.applyAdvancedFilter();
-    }
-    else {
+    if ((text || '').length > 0) {
       this.filter = { q: text };
       this.listPage = 1;
       this.listHasNext = false;
@@ -164,9 +134,9 @@ export class #[Table.module]#ListComponent implements OnInit {
 
   private search() {
     this.gpsPageList.showLoading('Pesquisando...');
-    this._service.getByFilter(this.filter, this.listPage, this.pageSize)
+    this.service.getByFilter(this.filter, this.listPage)
       .then(result => { 
-        this.listItems = [...this.listItems,...result.items.map(item => this.extendItem(item))];
+        this.listItems = [...this.listItems,...result.items.map(item => this.extend#[Table.module]#(item))];
         this.listHasNext = result.hasNext;
         this.gpsPageList.hideLoading();
       })
@@ -194,9 +164,9 @@ export class #[Table.module]#ListComponent implements OnInit {
       title: 'Confirmar exclusão',
       message: 'Deseja confirmar a exclusão deste registro?',
       confirm: () => {
-        this.#[Table.controller]#Service.remove(item)
+        this.service.remove(#[inlineFields,isKey=true]#item.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
           .then(result => {                
-            this.notificationService.success("Registro removido com sucesso!");
+            this.notificationService.success('Registro removido com sucesso!');
             this.resetSearch();                
           });
       }
@@ -217,62 +187,30 @@ export class #[Table.module]#ListComponent implements OnInit {
   //#endregion
 
   //#region Metodos de montagem dos dados
-  private extendItem(source: #[Table.module]#): #[Table.module]#Extended {
-    // TODO
-    let _result: #[Table.module]#Extended = new #[Table.module]#Extended().parseJsonToObject(source);
+  private extend#[Table.module]#(item:#[Table.module]#): #[Table.module]#Extended {
+    let result = new #[Table.module]#Extended().parseJsonToObject(item);
     #[whileFields,!enumComponent=]#
-    // Enumerador #[Field.enumComponent]#
-    _result.$#[Field.name]#Description = #[Field.enumComponent,ModuleName]#Enum.getDescription(_result.#[Field.name]#);
+    result.$#[Field.name]#Description = #[Field.enumComponent,ModuleName]#Enum.getDescription(result.#[Field.name]#);
     #[endWhileFields]#
-
-
-    // TODO
     #[whileFields,!zoomComponent=]#
-    // Zoom #[Field.zoomComponent]#
-    this.get#[Field.zoomComponent,ModuleName]#Description(_result.#[Field.name]#).then(value => { _result.#[Field.name]#Description = value });
+    this.extend#[Field.zoomComponent,ModuleName]#(result);
     #[endWhileFields]#
-
-    return _result;
+    return result;
+  }
+  
+  #[whileFields,!zoomComponent=]#
+  private extend#[Field.zoomComponent,ModuleName]#(item:#[Table.module]#Extended) {
+    let model = new #[Field.zoomComponent,ModuleName]#().parseJsonToObject({#[Field.zoomComponent,ZoomKeyField]#: item.#[Field.name]#});
+    this.#[Field.zoomComponent,ControllerName]#Zoom.zoomById(model).then(value => item.$#[Field.name]# = value);
   }
 
-  // TODO
-  #[whileFields,!zoomComponent=]#
-  private get#[Field.zoomComponent,ModuleName]#Description(#[Field.name]#: #[Field.inputType]#): Promise<string> {
-    return new Promise<string>(resolve => {
-      let _result: #[Field.zoomComponent,ModuleName]# = this.#[Field.zoomComponent,ControllerName]#List.find(item => item.#[Field.zoomComponent,ZoomKeyField]# == #[Field.name]#);
-      if (_result !== undefined) {
-        resolve(_result.#[Field.zoomComponent,ZoomLabelField]#);
-      }
-      else {
-        let _#[Field.zoomComponent,ControllerName]# = new #[Field.zoomComponent,ModuleName]#();
-        _#[Field.zoomComponent,ControllerName]#.#[Field.zoomComponent,ZoomKeyField]# = #[Field.name]#;
-        this.#[Field.zoomComponent,ControllerName]#Service.get#[Field.zoomComponent,ModuleName]#ById(_#[Field.zoomComponent,ControllerName]#)
-          .then(data => {
-            if (!this.#[Field.zoomComponent,ControllerName]#List.find(item => item.#[Field.zoomComponent,ZoomKeyField]# == #[Field.name]#)) {
-              this.#[Field.zoomComponent,ControllerName]#List.push(data);
-            }
-            resolve(data.#[Field.zoomComponent,ZoomLabelField]#);
-          })
-          .catch(error => {
-            resolve('');
-          });
-      }
-    });
+  #[endWhileFields]#
+
+  #[whileFields,!enumComponent=]#
+  private get#[Field.enumComponent,ModuleName]#Description(value) {
+    return #[Field.enumComponent,ModuleName]#Enum.getDescription(value);
   }
   #[endWhileFields]#
   //#endregion
-
-
-
-
-
-  // TODO - ver se precisa usar essa logica ai...
-  _ngOnInit() {
-    #[whileFields,!zoomComponent=]#
-    this.#[Field.zoomComponent,ControllerName]#Service.get#[Field.zoomComponent,ModuleName]#ByFilter(new SimpleFilter())
-      .then(list => { this.#[Field.zoomComponent,ControllerName]#List = list.items; });
-    #[endWhileFields]#
-  }
-
 
 }

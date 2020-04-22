@@ -23,7 +23,7 @@ export class #[Table.module]# {
 
 export interface I#[Table.module]#Filter {
   q?:string;
-  #[whileFields,isFilter=true]#    
+  #[whileFields,isFilter=true]#
   *[typescript/declareRangeField.txt,isRangeFilter=true]**[typescript/declareField.txt,isRangeFilter=false]*
   #[endWhileFields]#
 }
