@@ -1,7 +1,0 @@
-﻿<po-input
-	name="#[Field.name]#"
-	class="po-md-12"
-	p-label="#[Field.description]#"
-	[(ngModel)]="filter.#[Field.name]#"
-	ngDefaultControl>
-</po-input>

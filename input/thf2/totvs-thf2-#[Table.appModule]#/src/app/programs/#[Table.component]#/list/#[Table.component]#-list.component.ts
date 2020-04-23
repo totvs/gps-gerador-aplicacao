@@ -16,8 +16,7 @@ import { #[Field.zoomComponent,ModuleName]#Zoom } from '../zoom/#[Field.zoomComp
 
 @Component({
   selector: 'app-#[Table.component]#-list',
-  templateUrl: './#[Table.component]#-list.component.html',
-  styleUrls: []
+  templateUrl: './#[Table.component]#-list.component.html'
 })
 
 export class #[Table.module]#ListComponent implements OnInit {
@@ -81,7 +80,10 @@ export class #[Table.module]#ListComponent implements OnInit {
 
   private initEnums() {
     #[whileFields,!enumComponent=]#
-    this.#[Field.enumComponent,ControllerName]#Options = [...#[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,ModuleName]#];
+    this.#[Field.enumComponent,ControllerName]#Options = [
+      { value: #[IF,inputType=String]#''#[endIF]##[IF,inputType=Number]#0#[endIF]##[IF,inputType=Boolean]#null#[endIF]#, label: 'Todos' },
+      ...#[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,ModuleName]#
+    ];
     #[endWhileFields]#
   }
 
@@ -166,7 +168,7 @@ export class #[Table.module]#ListComponent implements OnInit {
       confirm: () => {
         this.service.remove(#[inlineFields,isKey=true]#item.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
           .then(result => {                
-            this.notificationService.success('Registro removido com sucesso!');
+            this.notificationService.success('Registro excluído com sucesso!');
             this.resetSearch();                
           });
       }

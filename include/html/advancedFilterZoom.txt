@@ -1,0 +1,11 @@
+﻿<po-lookup
+	name="filter#[Field.name]#"
+	class="po-md-12"
+	p-label="#[Field.description]#"
+	[p-columns]="#[Field.zoomComponent,controllerName]#Zoom.COLUMNS"
+	[p-filter-service]="#[Field.zoomComponent,controllerName]#Zoom"
+	[p-field-label]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_LABEL"
+	[p-field-value]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_VALUE"
+	[p-field-format]="#[Field.zoomComponent,controllerName]#Zoom.fieldFormat"
+	[(ngModel)]="filter.#[Field.name]#">
+</po-lookup>

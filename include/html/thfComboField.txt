@@ -6,7 +6,6 @@
         p-required="#[Field.isRequired]#"
         [p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
         [(ngModel)]="#[Table.controller]#.#[Field.name]#"
-        [p-options]="#[Field.enumComponent,ControllerName]#Options"
-        ngDefaultControl>
+        [p-options]="#[Field.enumComponent,ControllerName]#Options">
     </po-combo>
 </div>

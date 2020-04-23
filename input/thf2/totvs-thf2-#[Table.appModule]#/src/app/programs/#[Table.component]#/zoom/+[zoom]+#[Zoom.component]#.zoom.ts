@@ -14,9 +14,9 @@ export class #[Zoom.module]#Zoom {
     //#region Service
     private readonly url = '#[Zoom.appModule]#/#[Zoom.appVersion]#/#[Zoom.controller,Plural]#';
     private readonly urlKeys = this.url
-    #[whileZoom,isKey=true]# 
+        #[whileZoom,isKey=true]# 
         + '/{{#[ZoomItem.name]#}}'
-    #[endWhileZoom]#
+        #[endWhileZoom]#
         ;
 
     zoomByFilter(searchObject?:any,pageNumber?:number,pageSize?:number): Promise<TTalkCollection<#[Zoom.module]#>> {
@@ -49,15 +49,28 @@ export class #[Zoom.module]#Zoom {
 
     COLUMNS: PoLookupColumn[];
 	#[whileZoom,isLabel=true]#
-    FIELD_LABEL: string = '#[ZoomItem.name]#';
+    readonly FIELD_LABEL = '#[ZoomItem.name]#';
 	#[endWhileZoom]#
 	#[whileZoom,isKey=true]#
-    FIELD_VALUE: string = '#[ZoomItem.name]#';
+    readonly FIELD_VALUE = '#[ZoomItem.name]#';
 	#[endWhileZoom]#
 
     private createColumns() {
         this.COLUMNS = [];
         this.columnNames.forEach(column => this.COLUMNS.push(this.columnDefinition[column]));
+    }
+
+    fieldFormat(value) {
+        if (value) {
+            #[whileZoom,isKey=true]#
+            let _cod = value.#[ZoomItem.name]#;
+            #[endWhileZoom]#
+            #[whileZoom,isLabel=true]#
+            let _des = value.#[ZoomItem.name]#;
+            #[endWhileZoom]#
+            return `${_cod} - ${_des}`;
+        }
+        return '';
     }
 
     getFilteredData(filter:string,page:number,pageSize:number): Observable<TTalkCollection<#[Zoom.module]#>> {

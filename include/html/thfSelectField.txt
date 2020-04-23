@@ -1,12 +1,11 @@
 <div class="po-row">
-    <po-switch
-        class="po-md-3"
+    <po-select
         name="#[Field.name]#"
-        p-label-off="Não"
-        p-label-on="Sim"
+        class="po-md-4"
         p-label="#[Field.description]#"
         p-required="#[Field.isRequired]#"
         [p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
-        [(ngModel)]="#[Table.controller]#.#[Field.name]#">
-    </po-switch>
+        [(ngModel)]="#[Table.controller]#.#[Field.name]#"
+        [p-options]="#[Field.enumComponent,ControllerName]#Options">
+    </po-select>
 </div>

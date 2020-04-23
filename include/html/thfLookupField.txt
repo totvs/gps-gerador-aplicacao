@@ -10,6 +10,6 @@
         [p-filter-service]="#[Field.zoomComponent,controllerName]#Zoom"
         [p-field-label]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_LABEL"
         [p-field-value]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_VALUE"
-        ngDefaultControl>
+        [p-field-format]="#[Field.zoomComponent,controllerName]#Zoom.fieldFormat">
     </po-lookup>
 </div>

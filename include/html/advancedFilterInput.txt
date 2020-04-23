@@ -1,0 +1,6 @@
+﻿<po-input
+	name="filter#[Field.name]#"
+	class="po-md-12"
+	p-label="#[Field.description]#"
+	[(ngModel)]="filter.#[Field.name]#">
+</po-input>

@@ -1,0 +1,8 @@
+﻿<po-switch
+	name="filter#[Field.name]#"
+	class="po-md-12"
+	p-label="#[Field.description]#"
+	p-label-off="Não"
+    p-label-on="Sim"
+	[(ngModel)]="filter.#[Field.name]#">
+</po-switch>

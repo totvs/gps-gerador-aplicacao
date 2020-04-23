@@ -1,89 +1,76 @@
-import { ThfNotificationService } from '@totvs/thf-ui/services/thf-notification/thf-notification.service';
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { PoNotificationService } from '@portinari/portinari-ui';
+import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
-import { take } from 'rxjs/operators';
 #[whileFields,!enumComponent=]#
-import { #[Field.enumComponent,ModuleName]#Enum } from '../../../shared/enum/#[Field.enumComponent]#.enum';
+import { #[Field.enumComponent,ModuleName]#Enum } from '../enum/#[Field.enumComponent]#.enum';
 #[endWhileFields]#
 #[whileFields,!zoomComponent=]#
-import { #[Field.zoomComponent,ModuleName]#Zoom } from '../../../shared/zoom/#[Field.zoomComponent,ControllerName]#.zoom';
+import { #[Field.zoomComponent,ModuleName]#Zoom } from '../zoom/#[Field.zoomComponent,ControllerName]#.zoom';
 #[endWhileFields]#
 
 @Component({
   selector: 'app-#[Table.component]#-edit',
-  templateUrl: './#[Table.component]#-edit.component.html',
-  styleUrls: [],
-  providers: [#[Table.module]#Service]
+  templateUrl: './#[Table.component]#-edit.component.html'
 })
 export class #[Table.module]#EditComponent implements OnInit {
 
-  private route:string = '';
-  public  #[Table.controller]#:#[Table.module]# = new #[Table.module]#();
-  public  action:string = "Incluir";  
-  public  isNew:boolean = true;
+  data:#[Table.module]#;
 #[whileFields,!enumComponent=]#
-  public  #[Field.enumComponent,ControllerName]#Options = #[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,controllerName]#;
+  #[Field.enumComponent,ControllerName]#Options = [...#[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,ModuleName]#];
 #[endWhileFields]#
-  
-  public loadingStatus = {
+  loadingStatus = {
     active: false,
     message: '',
-  }
+  };
 
-  constructor(private _#[Table.controller]#Service:#[Table.module]#Service,
-#[whileFields,!zoomComponent=]#
-              public  #[Field.zoomComponent,ControllerName]#Zoom: #[Field.zoomComponent,ModuleName]#Zoom,
-#[endWhileFields]#
-              private _activatedRoute: ActivatedRoute, 
-              private _router:Router,
-              private _thfNotificationService:ThfNotificationService) { }
+  private isNew:boolean = true;
+
+  constructor(
+    #[whileFields,!zoomComponent=]#
+    public  #[Field.zoomComponent,ControllerName]#Zoom: #[Field.zoomComponent,ModuleName]#Zoom,
+    #[endWhileFields]#
+    private service:#[Table.module]#Service,
+    private activatedRoute: ActivatedRoute, 
+    private router:Router,
+    private notificationService:PoNotificationService) { }
 
   ngOnInit() {
-    this.#[Table.controller]# = new #[Table.module]#();
-    this.isNew = true;
-    #[whileFields,isKey=true]#
-    this.#[Table.controller]#.#[Field.name]# = #[Field.defaultValue]#;
-    #[endWhileFields]#
-
-    this._activatedRoute.params.pipe(take(1)).subscribe(
-      (params: Params) => {        
-        #[whileFields,isKey=true]#
-        #[IF,isFirst]#if(params.#[Field.name]# !== undefined#[endIF]##[IF,!isFirst]# || params.#[Field.name]# !== undefined #[endIF]##[IF,isLast]#){#[endIF]#
-        #[endWhileFields]#
-          #[whileFields,isKey=true]#
-          this.#[Table.controller]#.#[Field.name]# = params.#[Field.name]#;
-          #[endWhileFields]#
-          this.isNew = false;
-          this._#[Table.controller]#Service.get#[Table.module]#ById(this.#[Table.controller]#)
-            .then(#[Table.controller]# => { this.setData(#[Table.controller]#) });
-        }
+    this.activatedRoute.params.subscribe(
+      (params: Params) => {
+        this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#).then(#[Table.controller]# => { this.setData(#[Table.controller]#) });
       }
     );
   }
 
-  cancel(){
-    this._router.navigate([this.route]);
+  private back() {
+    this.router.navigate(['']);
   }
 
-  save(){
+  cancel() {
+    this.back();
+  }
+
+  save() {
     this.showLoading('Salvando dados...');
-    this._#[Table.controller]#Service.save(this.#[Table.controller]#, this.isNew)
+    let _promise: Promise<#[Table.module]#>;
+    if (this.isNew)
+      _promise = this.service.insert(this.data).then(value => { this.notificationService.success('Registro cadastrado com sucesso!'); return value; });
+    else
+      _promise = this.service.update(this.data).then(value => { this.notificationService.success('Registro alterado com sucesso!'); return value; });
+    _promise
       .then(result => {
-        this._thfNotificationService.success("#[Table.description]# " 
-                                              + (this.isNew ? "cadastrado" : "alterado")
-                                              + " com sucesso!");
         this.hideLoading();
-        this._router.navigate([this.route]);
+        this.back();
       })
       .catch(error => {
         this.hideLoading();
       });
   }
 
-  setData(#[Table.controller]#){    
-    this.#[Table.controller]# = #[Table.controller]#;
+  setData(value){    
+    this.data = value;
   }
   
   private showLoading(message?:string) {

@@ -1,0 +1,16 @@
+<po-switch
+	name="filter#[Field.name]#Initial"
+	class="po-md-6"
+	p-label="#[Field.description]# Inicial"
+	p-label-off="Não"
+    p-label-on="Sim"
+	[(ngModel)]="filter.#[Field.name]#Initial">
+</po-switch>
+<po-switch
+	name="filter#[Field.name]#Final"
+	class="po-md-6"
+	p-label="#[Field.description]# Final"
+	p-label-off="Não"
+    p-label-on="Sim"
+	[(ngModel)]="filter.#[Field.name]#Final">
+</po-switch>

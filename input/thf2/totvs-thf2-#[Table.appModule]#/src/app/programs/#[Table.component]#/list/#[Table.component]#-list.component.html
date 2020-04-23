@@ -20,7 +20,7 @@
         <ng-template gps-advanced-search>
             <div class="po-row">
                 #[whileFields,isFilter=true]#           
-                *[html/advancedFilterInputRangeField.txt,isRangeFilter=true]**[html/advancedFilterInputField.txt,isRangeFilter=false]*
+                *[html/advancedFilterZoom.txt,!zoomComponent=|isRangeFilter=false]**[html/advancedFilterZoomRange.txt,!zoomComponent=|isRangeFilter=true]**[html/advancedFilterEnum.txt,!enumComponent=|isRangeFilter=false]**[html/advancedFilterEnumRange.txt,!enumComponent=|isRangeFilter=true]**[html/advancedFilterNumber.txt,inputType=Number|enumComponent=|zoomComponent=|isRangeFilter=false]**[html/advancedFilterNumberRange.txt,inputType=Number|enumComponent=|zoomComponent=|isRangeFilter=true]**[html/advancedFilterSwitch.txt,inputType=Boolean|enumComponent=|zoomComponent=|isRangeFilter=false]**[html/advancedFilterSwitchRange.txt,inputType=Boolean|enumComponent=|zoomComponent=|isRangeFilter=true]**[html/advancedFilterInput.txt,inputType=String|enumComponent=|zoomComponent=|isRangeFilter=false]**[html/advancedFilterInputRange.txt,inputType=String|enumComponent=|zoomComponent=|isRangeFilter=true]*
                 #[endWhileFields]#
             </div>
         </ng-template>
