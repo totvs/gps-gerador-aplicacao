@@ -51,6 +51,8 @@ procedure getByFilter:
 
     def var oQuery    as GpsQuery       no-undo.
     def var oWhere    as QueryCondition no-undo.
+    def var in-search-value-aux  as int no-undo.
+    def var lg-value-integer-aux as log no-undo.
 
     empty temp-table tmp#[Table.module]#.
 
@@ -74,7 +76,25 @@ procedure getByFilter:
 
         #[whileFields,isFilter=true]#
         *[progress/bo/assignRangeFilter.txt,isRangeFilter=true]**[progress/bo/assignFilter.txt,isRangeFilter=false]*
-        #[endWhileFields]#  
+        #[endWhileFields]#
+
+        if  tmp#[Table.module]#Filter.ds-query <> ?
+        and tmp#[Table.module]#Filter.ds-query <> ""
+        then do:
+            assign in-search-value-aux = integer(tmp#[Table.module]#Filter.ds-query) no-error.
+            assign lg-value-integer-aux = not error-status:error.
+
+            oWhere = oQuery:and().
+            #[whileFields,isFilter=true|isRangeFilter=false|databaseType=character]#
+            oWhere:or("#[Table.name]#.#[Field.fieldName]#", tmp#[Table.module]#Filter.ds-query, oWhere:OPERATOR_BG#[endIF]#).
+            #[endWhileFields]#
+            if lg-value-integer-aux
+            then do:
+                #[whileFields,isFilter=true|isRangeFilter=false|databaseType=integer]#
+                oWhere:or("#[Table.name]#.#[Field.fieldName]#", in-search-value-aux).
+                #[endWhileFields]#
+            end.
+        end.  
     end.
 
     oQuery:execute().
@@ -307,38 +327,6 @@ procedure createTemp#[Table.module]#:
     buffer-copy #[Table.name]# to tmp#[Table.module]#.
 
 end.
-
-procedure parseQuickSearch:
-    def input-output param table for tmp#[Table.module]#Filter.
-
-    def var oGpsUtils            as GpsUtils no-undo.
-    def var in-search-value-aux  as int      no-undo.
-    def var lg-value-integer-aux as log      no-undo.
-
-    oGpsUtils = new GpsUtils().
-
-    for first tmp#[Table.module]#Filter
-        where tmp#[Table.module]#Filter.ds-query <> ?
-          and tmp#[Table.module]#Filter.ds-query <> "":
-
-        assign in-search-value-aux = integer(tmp#[Table.module]#Filter.ds-query) no-error.
-        assign lg-value-integer-aux = not error-status:error.
-        
-        #[whileFields,isFilter=true|isRangeFilter=false|databaseType=character]#
-        assign tmp#[Table.module]#Filter.#[Field.fieldName]# = tmp#[Table.module]#Filter.ds-query.
-        #[endWhileFields]#
-        #[whileFields,isFilter=true|isRangeFilter=false|databaseType=integer]#
-        if lg-value-integer-aux
-        then assign tmp#[Table.module]#Filter.#[Field.fieldName]# = in-search-value-aux.
-        #[endWhileFields]#
-
-    end.
-
-    finally:
-        delete object oGpsUtils.
-    end finally.
-
-end procedure.
 
 procedure adjustSearchFields private:
     def input-output param table for tmp#[Table.module]#Filter.
