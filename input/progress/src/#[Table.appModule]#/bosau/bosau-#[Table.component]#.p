@@ -69,7 +69,7 @@ procedure getByFilter:
     oQuery:setStartRow(startRow):setPageSize(pageSize).
     oQuery:setMethod("createTemp#[Table.module]#", this-procedure).
 
-    for first tmp#[Table.module]#:
+    for first tmp#[Table.module]#Filter:
         oWhere = oQuery:and().
 
         #[whileFields,isFilter=true]#

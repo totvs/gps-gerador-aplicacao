@@ -1,4 +1,4 @@
 if  (tmp#[Table.module]#Filter.#[Field.fieldName]# <> ?)
 and (tmp#[Table.module]#Filter.#[Field.fieldName]# #[IF,databaseType=character]#<> ""#[endIF]##[IF,databaseType=integer]#> 0#[endIF]##[IF,!databaseType=character|!databaseType=integer]#<> ?#[endIF]#)
-then oWhere:and("#[Table.name]#.#[Field.fieldName]#", tmp#[Table.module]#Filter.#[Field.fieldName]##[IF,databaseType=character]#, oWhere:OPERATOR_GT#[endIF]#).
+then oWhere:and("#[Table.name]#.#[Field.fieldName]#", tmp#[Table.module]#Filter.#[Field.fieldName]##[IF,databaseType=character]#, oWhere:OPERATOR_BG#[endIF]#).
 
