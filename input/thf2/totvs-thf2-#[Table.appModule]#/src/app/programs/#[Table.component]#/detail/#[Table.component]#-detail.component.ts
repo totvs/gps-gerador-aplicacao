@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { PoDialogService, PoNotificationService } from '@portinari/portinari-ui';
+import { GpsPageDetailComponent } from 'totvs-gps-controls';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
 import { #[Table.module]#Extended } from '../models/#[Table.component]#-extended';
@@ -18,6 +19,8 @@ import { #[Field.zoomComponent,ModuleName]#Zoom } from '../zoom/#[Field.zoomComp
 })
 export class #[Table.module]#DetailComponent implements OnInit {
 
+  @ViewChild('gpsPageDetail', {static:true}) gpsPageDetail: GpsPageDetailComponent;
+
   data:#[Table.module]#Extended;
 
   constructor(
@@ -33,30 +36,39 @@ export class #[Table.module]#DetailComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
-        this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#).then(#[Table.controller]# => { this.setData(#[Table.controller]#) });
+        this.gpsPageDetail.showLoading('Carregando');
+        this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
+          .then(#[Table.controller]# => { 
+            this.gpsPageDetail.hideLoading();
+            this.setData(#[Table.controller]#);
+          })
+          .catch(() => this.onBack());
       }
     );
   }
 
-  back(){
+  onBack() {
     this.router.navigate(['']);
   }
 
-  remove(){
+  onRemove() {
     this.dialogService.confirm({
-      title: 'Confirmar exclusão',
-      message: 'Deseja confirmar a exclusão deste registro?',
+      title: 'Remover',
+      message: 'Deseja confirmar a remoção deste registro?',
       confirm: () => {
+        this.gpsPageDetail.showLoading('Removendo...');
         this.service.remove(#[inlineFields,isKey=true]#this.data.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
-          .then(result => {              
-            this.notificationService.success('Registro excluído com sucesso!');              
-            this.back();
-          });
+          .then(result => {
+            this.gpsPageDetail.hideLoading();
+            this.notificationService.success('Registro removido com sucesso!');
+            this.onBack();
+          })
+          .catch(() => this.gpsPageDetail.hideLoading());
       }
     });
   }
 
-  edit(){
+  onEdit() {
     this.router.navigate([
       'edit',
       #[whileFields,isKey=true]#
@@ -68,7 +80,7 @@ export class #[Table.module]#DetailComponent implements OnInit {
   setData(value){     
     this.data = this.extend#[Table.module]#(value);
   }
-  
+
   //#region Metodos de montagem dos dados
   private extend#[Table.module]#(item:#[Table.module]#): #[Table.module]#Extended {
     let result = new #[Table.module]#Extended().parseJsonToObject(item);

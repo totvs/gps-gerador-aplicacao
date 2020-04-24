@@ -9,12 +9,6 @@ export class #[Table.module]# {
   #[Field.name]#:#[Field.inputType]#;
   #[endWhileFields]#
   
-  constructor(){     
-    #[whileFields]#   
-    // this.#[Field.name]# = #[Field.defaultValue]#;       
-    #[endWhileFields]# 
-  }
-  
   parseJsonToObject(jsonData): #[Table.module]# {
     TotvsGpsJsonUtils.getInstance().assign(this, jsonData);
     return this;

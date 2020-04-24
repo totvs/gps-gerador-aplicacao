@@ -1,12 +1,13 @@
-<po-page-edit t-title="#[Table.description]#">
-  <po-loading-overlay
-    t-screen-lock="true"
-    [t-text]="loadingStatus.message"
-    [hidden]="!loadingStatus.active">
-  </po-loading-overlay>
-  <form #f="ngForm">
-    #[whileFields,fixedValue=]#
-    *[html/thfTextAreaField.txt,inputComponent=TextArea]**[html/thfLookupField.txt,!zoomComponent=]**[html/thfSelectField.txt,!enumComponent=]**[html/thfNumberField.txt,inputType=Number|enumComponent=|zoomComponent=|inputComponent=]**[html/thfSwitchField.txt,inputType=Boolean|enumComponent=|zoomComponent=|inputComponent=]**[html/thfInputField.txt,inputType=String|enumComponent=|zoomComponent=|inputComponent=]*
-    #[endWhileFields]#
-  </form>
-</po-page-edit>
+<gps-page-edit 
+  #gpsPageEdit
+  p-title="#[Table.description]#"
+  (p-cancel)="onCancel()"
+  (p-save)="onSave()">
+  <ng-container *ngIf="data">
+    <div class="po-row">
+      #[whileFields,fixedValue=]#
+      *[html/thfTextAreaField.txt,inputComponent=TextArea]**[html/thfLookupField.txt,!zoomComponent=]**[html/thfSelectField.txt,!enumComponent=]**[html/thfNumberField.txt,inputType=Number|enumComponent=|zoomComponent=|inputComponent=]**[html/thfSwitchField.txt,inputType=Boolean|enumComponent=|zoomComponent=|inputComponent=]**[html/thfInputField.txt,inputType=String|enumComponent=|zoomComponent=|inputComponent=]*
+      #[endWhileFields]#
+    </div>
+  </ng-container>
+</gps-page-edit>

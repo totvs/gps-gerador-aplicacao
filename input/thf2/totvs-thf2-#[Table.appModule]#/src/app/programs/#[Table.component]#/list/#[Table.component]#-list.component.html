@@ -1,5 +1,6 @@
-<gps-page-list #gpsPageList
-    [p-title]="pageTitle"
+<gps-page-list 
+    #gpsPageList
+    p-title="#[Table.description]#"
     [p-actions]="pageActions"
     [disclaimer-config]="pageDisclaimerConfig"
     [(filter)]="filter"
@@ -10,7 +11,6 @@
         <po-table 
             class="po-md-12"
             p-striped
-            [p-actions]="listActions"
             [p-columns]="listColumns"
             [p-items]="listItems"
             [p-show-more-disabled]="!listHasNext"

@@ -1,15 +1,18 @@
 using classes.json.GpsJsonUtils.
+using classes.utils.GpsUtils.
+
 {utp/ut-api.i}
 {utp/ut-api-utils.i}
-{utp/ut-api-action.i get#[Table.module]#ByFilter GET    / }
-{utp/ut-api-action.i get#[Table.module]#ById     GET    /#[inlineFields,isKey=true]#~*/#[endInlineFields]# }
-{utp/ut-api-action.i create#[Table.module]#      POST   / }
-{utp/ut-api-action.i update#[Table.module]#      PUT    /#[inlineFields,isKey=true]#~*/#[endInlineFields]# }
-{utp/ut-api-action.i remove#[Table.module]#      DELETE /#[inlineFields,isKey=true]#~*/#[endInlineFields]# }
+{utp/ut-api-action.i getById        GET    /#[inlineFields,isKey=true]#~*/#[endInlineFields]# }
+{utp/ut-api-action.i getByFilter    GET    / }
+{utp/ut-api-action.i createRecord   POST   / }
+{utp/ut-api-action.i updateRecord   PUT    /#[inlineFields,isKey=true]#~*/#[endInlineFields]# }
+{utp/ut-api-action.i removeRecord   DELETE /#[inlineFields,isKey=true]#~*/#[endInlineFields]# }
 {utp/ut-api-notfound.i}
 
 {#[Table.appModule]#/bosau/bosau-#[Table.component]#.i}
 {hdp/hdrunpersis.iv "new"}
+{dbo/utils/rowerror.i}
 
 define variable expandables as character   no-undo.
 define variable startRow    as integer     no-undo.    
@@ -22,21 +25,20 @@ define variable payload     as longchar    no-undo.
 define variable oHeaders    as JsonObject  no-undo.
 define variable orderList   as character   no-undo.
 
-define variable jsonArray#[Table.module]# as JsonArray  no-undo.
-define variable json#[Table.module]#      as JsonObject no-undo.
+define variable jsonArrayResult as JsonArray  no-undo.
+define variable jsonResult      as JsonObject no-undo.
 
 define variable h-bosau-#[Table.component]#-aux as handle no-undo.
 
 define variable oGpsJsonUtils as GpsJsonUtils no-undo.
+define variable oGpsUtils     as GpsUtils     no-undo.
 
 procedure setupInputParameters private:
     define input parameter pJsonInput as JsonObject no-undo.
-    
-    /* bloco copiado da ut-api-utils.i (procedure parseInputParameters) pois nao devolve o parametro "order" */
+
     define variable oRequestParser as JsonAPIRequestParser no-undo.
 
     oRequestParser = new JsonAPIRequestParser(pJsonInput).
-
     assign oHeaders     = oRequestParser:getHeaders()
            pathParams   = oRequestParser:getPathParams()
            queryParams  = oRequestParser:getQueryParams()
@@ -45,17 +47,17 @@ procedure setupInputParameters private:
            fieldList    = oRequestParser:getFieldsChar()
            expandables  = oRequestParser:getExpandChar()
            payload      = oRequestParser:getPayloadLongChar().
-    /* fim - ut-api-utils.i */
-    
     assign orderList = oRequestParser:getOrderChar().
 
     assign oGpsJsonUtils                   = new GpsJsonUtils()
+           oGpsJsonUtils:jsonVersion       = GpsJsonUtils:JSON_V2
            oGpsJsonUtils:outputFields      = fieldList
            oGpsJsonUtils:outputExpandables = expandables.
+    assign oGpsUtils = new GpsUtils().
 
 end.
 
-procedure get#[Table.module]#ById:
+procedure getById:
 
     define input  parameter jsonInput  as JsonObject        no-undo.
     define output parameter jsonOutput as JsonObject        no-undo.
@@ -67,11 +69,11 @@ procedure get#[Table.module]#ById:
     run setupInputParameters(input jsonInput).
     
     #[whileFields,isKey=true]#
-    #[IF,isFirst]#assign#[endIF]##[IF,!isFirst]#      #[endIF]# #[Field.fieldName]#-aux = #[Field.databaseType,ProgressCast]#(pathParams:getCharacter(#[Field.id]#))#[IF,isLast]#.#[endIF]#
+    #[IF,isFirst]#assign#[endIF]##[IF,!isFirst]#      #[endIF]# #[Field.fieldName]#-aux = #[Field.databaseType,ProgressCast]#(pathParams:getCharacter(#[Field.id]#))#[IF,isLast]# no-error.#[endIF]#
     #[endWhileFields]#
 
     {hdp/hdrunpersis.i "#[Table.appModule]#/bosau/bosau-#[Table.component]#.p" "h-bosau-#[Table.component]#-aux"}
-    run get#[Table.module]#ById in h-bosau-#[Table.component]#-aux(
+    run getById in h-bosau-#[Table.component]#-aux (
         #[whileFields,isKey=true]#
         input  #[Field.fieldName]#-aux,
         #[endWhileFields]#
@@ -79,154 +81,118 @@ procedure get#[Table.module]#ById:
         input-output table rowErrors) no-error.
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
-    else assign json#[Table.module]# = oGpsJsonUtils:getJsonObjectFromTable(temp-table tmp#[Table.module]#:default-buffer-handle).
-    run createJsonResponse(json#[Table.module]#, input table RowErrors, input false, output jsonOutput). 
+
+    assign jsonResult = oGpsJsonUtils:getJsonObjectFromTable(temp-table tmp#[Table.module]#:default-buffer-handle)
+           jsonOutput = oGpsJsonUtils:createJsonResponse(jsonResult, temp-table RowErrors:default-buffer-handle).
 
 end procedure.
 
-procedure get#[Table.module]#ByFilter:
+procedure getByFilter:
 
     define input  parameter jsonInput  as JsonObject no-undo.
     define output parameter jsonOutput as JsonObject no-undo.       
 
-    define variable searchQueryAux  as character     no-undo.
-    
     run setupInputParameters(input jsonInput).
+
+    empty temp-table tmp#[Table.module]#Filter.
+    oGpsUtils:convertQueryParamToTable(queryParams, temp-table tmp#[Table.module]#Filter:default-buffer-handle).
                              
     {hdp/hdrunpersis.i "#[Table.appModule]#/bosau/bosau-#[Table.component]#.p" "h-bosau-#[Table.component]#-aux"}
-    if queryParams:has("search")
-    then do:
-        assign searchQueryAux = queryParams:GetJsonArray("search"):getCharacter(1).
-            
-        run get#[Table.module]#ByQuery in h-bosau-#[Table.component]#-aux(
-            input  startRow,
-            input  pageSize,
-            input  orderList,
-            input  searchQueryAux,
-            output hasNext,
-            output table tmp#[Table.module]#,
-            input-output table rowErrors) no-error.
-    end.
-    else do:
-        run getTempFilter(input  queryParams,
-                          output table tmp#[Table.module]#Filter).                          
-
-        run get#[Table.module]#ByFilter in h-bosau-#[Table.component]#-aux(
-            input  startRow,
-            input  pageSize,
-            input  orderList,
-            input  table tmp#[Table.module]#Filter,
-            output hasNext,
-            output table tmp#[Table.module]#,
-            input-output table rowErrors) no-error.
-    end.
-
+    run getByFilter in h-bosau-#[Table.component]#-aux (
+        input  startRow,
+        input  pageSize,
+        input  table tmp#[Table.module]#Filter,
+        output hasNext,
+        output table tmp#[Table.module]#,
+        input-output table rowErrors) no-error.
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
-    else assign jsonArray#[Table.module]# = oGpsJsonUtils:getJsonArrayFromTable(temp-table tmp#[Table.module]#:default-buffer-handle).
 
-    run createJsonResponse(jsonArray#[Table.module]#, input table RowErrors, input hasNext, output jsonOutput). 
+    assign jsonArrayResult = oGpsJsonUtils:getJsonArrayFromTable(temp-table tmp#[Table.module]#:default-buffer-handle)
+           jsonOutput      = oGpsJsonUtils:createJsonResponse(jsonArrayResult, temp-table RowErrors:default-buffer-handle, hasNext).
     
 end procedure.
 
-procedure create#[Table.module]#:
+procedure createRecord:
 
-   define input  parameter jsonInput  as JsonObject no-undo.
-   define output parameter jsonOutput as JsonObject no-undo.
+    define input  parameter jsonInput  as JsonObject no-undo.
+    define output parameter jsonOutput as JsonObject no-undo.
    
-   define variable jsonPayload as JsonObject no-undo.
+    define variable jsonPayload as JsonObject no-undo.
    
-   run setupInputParameters(input jsonInput).
-   
-   assign jsonPayload = oGpsJsonUtils:longcharToJsonObject(payload).
-   
-   run getTempTable(input jsonPayload,
-                    output table tmp#[Table.module]#) no-error.
-                     
+    run setupInputParameters(input jsonInput).
+
+    assign jsonPayload = oGpsJsonUtils:longcharToJsonObject(payload).
+    oGpsUtils:convertJsonObjectsToTable(jsonPayload, temp-table tmp#[Table.module]#:default-buffer-handle).
+
     {hdp/hdrunpersis.i "#[Table.appModule]#/bosau/bosau-#[Table.component]#.p" "h-bosau-#[Table.component]#-aux"}
-    run create#[Table.module]# in h-bosau-#[Table.component]#-aux(
-        input        table tmp#[Table.module]#,
+    run createRecord in h-bosau-#[Table.component]#-aux (
+        input-output table tmp#[Table.module]#,
         input-output table rowErrors) no-error.
-
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
     
-    run createJsonResponse(new JsonObject(), input table RowErrors, input false, output jsonOutput). 
+    assign jsonResult = oGpsJsonUtils:getJsonObjectFromTable(temp-table tmp#[Table.module]#:default-buffer-handle)
+           jsonOutput = oGpsJsonUtils:createJsonResponse(jsonResult, temp-table RowErrors:default-buffer-handle).
 
 end.
 
+procedure updateRecord:
 
-procedure update#[Table.module]#:
-
-   define input  parameter jsonInput  as JsonObject no-undo.
-   define output parameter jsonOutput as JsonObject no-undo.
+    define input  parameter jsonInput  as JsonObject no-undo.
+    define output parameter jsonOutput as JsonObject no-undo.
    
-   define variable jsonPayload as JsonObject no-undo.
+    define variable jsonPayload as JsonObject no-undo.
    
-   run setupInputParameters(input jsonInput).
+    run setupInputParameters(input jsonInput).
    
-   assign jsonPayload = oGpsJsonUtils:longcharToJsonObject(payload).
+    assign jsonPayload = oGpsJsonUtils:longcharToJsonObject(payload).
+    oGpsUtils:convertJsonObjectsToTable(jsonPayload, temp-table tmp#[Table.module]#:default-buffer-handle).
    
-   run getTempTable(input jsonPayload,
-                    output table tmp#[Table.module]#) no-error.
-                     
     {hdp/hdrunpersis.i "#[Table.appModule]#/bosau/bosau-#[Table.component]#.p" "h-bosau-#[Table.component]#-aux"}
-    run update#[Table.module]# in h-bosau-#[Table.component]#-aux(
-        input        table tmp#[Table.module]#,
+    run updateRecord in h-bosau-#[Table.component]#-aux (
+        input-output table tmp#[Table.module]#,
         input-output table rowErrors) no-error.
-    
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
     
-    run createJsonResponse(new JsonObject(), input table RowErrors, input false, output jsonOutput). 
+    assign jsonResult = oGpsJsonUtils:getJsonObjectFromTable(temp-table tmp#[Table.module]#:default-buffer-handle)
+           jsonOutput = oGpsJsonUtils:createJsonResponse(jsonResult, temp-table RowErrors:default-buffer-handle).
 
 end procedure.
 
-procedure remove#[Table.module]#:
+procedure removeRecord:
 
     define input  parameter jsonInput  as JsonObject no-undo.
     define output parameter jsonOutput as JsonObject no-undo.
     
+    #[whileFields,isKey=true]#
+    define variable #[Field.fieldName]#-aux as #[Field.databaseType]# no-undo.
+    #[endWhileFields]#
+    
     run setupInputParameters(input jsonInput).
     
+    #[whileFields,isKey=true]#
+    #[IF,isFirst]#assign#[endIF]##[IF,!isFirst]#      #[endIF]# #[Field.fieldName]#-aux = #[Field.databaseType,ProgressCast]#(pathParams:getCharacter(#[Field.id]#))#[IF,isLast]# no-error.#[endIF]#
+    #[endWhileFields]#
+    
     {hdp/hdrunpersis.i "#[Table.appModule]#/bosau/bosau-#[Table.component]#.p" "h-bosau-#[Table.component]#-aux"}
-    run remove#[Table.module]# in h-bosau-#[Table.component]#-aux(
+    run removeRecord in h-bosau-#[Table.component]#-aux(
         #[whileFields,isKey=true]#
-        input        #[Field.databaseType,ProgressCast]#(pathParams:getCharacter(#[Field.id]#)),
+        input  #[Field.fieldName]#-aux,
         #[endWhileFields]#
         input-output table rowErrors) no-error.
-
     if error-status:error
     then run insertErrorProgress(input "", input "", input-output table rowErrors).
                                                                                                                         
-    run createJsonResponse(new JsonObject(), input table RowErrors, input false, output jsonOutput). 
-
-end procedure.
-
-procedure getTempTable private:
-
-    define input  parameter jsonPayload as JsonObject.
-    define output parameter table for tmp#[Table.module]#.
-
-    create tmp#[Table.module]#.     
-    #[whileFields]#
-    #[IF,isFirst]#assign#[endIF]##[IF,!isFirst]#      #[endIF]# tmp#[Table.module]#.#[Field.fieldName,MaxAttributeSize]# = jsonPayload:get#[Field.databaseType]#(temp-table tmp#[Table.module]#:default-buffer-handle:buffer-field("#[Field.fieldName]#"):serialize-name)#[IF,isLast]#.#[endIF]#
-    #[endWhileFields]#
-    
-end procedure.
-
-procedure getTempFilter private:
-
-    define input  parameter queryParams      as JsonObject no-undo.
-    define output parameter table           for tmp#[Table.module]#Filter.
-                                            
-    create tmp#[Table.module]#Filter.
-    #[whileFields,isFilter=true]#
-    *[progress/api/assignTmpFilterRange.txt,isRangeFilter=true]**[progress/api/assignTmpFilter.txt,isRangeFilter=false]*
-    #[endWhileFields]#        
+    assign jsonOutput = oGpsJsonUtils:createEmptyResponse().
 
 end procedure.
 
 finally:
+    if valid-object(oGpsUtils)
+    then delete object oGpsUtils.
+    if valid-object(oGpsJsonUtils)
+    then delete object oGpsJsonUtils.
     {hdp/hddelpersis.i}
 end.

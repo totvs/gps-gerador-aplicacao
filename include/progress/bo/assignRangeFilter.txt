@@ -1,6 +1,7 @@
 if  (tmp#[Table.module]#Filter.#[Field.fieldName]#-ini <> ?)
-and (tmp#[Table.module]#Filter.#[Field.fieldName]#-ini #[IF,databaseType=character]#<> ""#[endIF]##[IF,!databaseType=character]# > 0#[endIF]#)
-then assign ds-query-aux = appendQueryAND("#[Field.fieldName]# >= #[IF,databaseType=character]#'#[endIF]#" + string(tmp#[Table.module]#Filter.#[Field.fieldName]#-ini)#[IF,databaseType=character]# + "'"#[endIF]#, ds-query-aux, lg-primeira-condicao-aux).
+and (tmp#[Table.module]#Filter.#[Field.fieldName]#-ini #[IF,databaseType=character]#<> ""#[endIF]##[IF,databaseType=integer]#> 0#[endIF]##[IF,!databaseType=character|!databaseType=integer]#<> ?#[endIF]#)
+then oWhere:and("#[Table.name]#.#[Field.fieldName]#", tmp#[Table.module]#Filter.#[Field.fieldName]#-ini, oWhere:OPERATOR_GE).
 if  (tmp#[Table.module]#Filter.#[Field.fieldName]#-fim <> ?)
-and (tmp#[Table.module]#Filter.#[Field.fieldName]#-fim #[IF,databaseType=character]#<> ""#[endIF]##[IF,!databaseType=character]# > 0#[endIF]#)
-then assign ds-query-aux = appendQueryAND("#[Field.fieldName]# <= #[IF,databaseType=character]#'#[endIF]#" + string(tmp#[Table.module]#Filter.#[Field.fieldName]#-fim)#[IF,databaseType=character]# + "'"#[endIF]#, ds-query-aux, lg-primeira-condicao-aux).
+and (tmp#[Table.module]#Filter.#[Field.fieldName]#-fim #[IF,databaseType=character]#<> ""#[endIF]##[IF,databaseType=integer]#> 0#[endIF]##[IF,!databaseType=character|!databaseType=integer]#<> ?#[endIF]#)
+then oWhere:and("#[Table.name]#.#[Field.fieldName]#", tmp#[Table.module]#Filter.#[Field.fieldName]#-fim, oWhere:OPERATOR_LE).
+

@@ -24,7 +24,6 @@ export class #[Table.module]#ListComponent implements OnInit {
   @ViewChild('gpsPageList', {static: true}) gpsPageList: GpsPageListComponent;
 
   //#region Parametros de tela
-  pageTitle:string = '#[Table.description]#';
   pageDisclaimerConfig: IDisclaimerConfig[];
   pageActions: PoPageAction[] = [
     { label: 'Adicionar', url: '/new' }
@@ -37,11 +36,13 @@ export class #[Table.module]#ListComponent implements OnInit {
   listColumns: PoTableColumn[] = [
     #[whileFields,isListable=true]#    
     { property: '#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]#', label: '#[Field.description]#' #[IF,databaseType=logical|enumComponent=]#, type: 'boolean'#[endIF]##[IF,databaseType=date|enumComponent=]#, type: 'date'#[endIF]##[IF,isLink=true]#, type: 'link', action: (value, row) => { this.onDetail(row); }#[endIF]#},
-    #[endWhileFields]#   
-  ];
-  listActions: PoTableAction[] = [
-    { label: 'Editar', action: this.onEdit.bind(this), icon: 'po-icon-edit' },    
-    { label: 'Remover', action: this.onRemove.bind(this), icon: 'po-icon-delete', type: 'danger' }
+    #[endWhileFields]#
+    { property: '$actions', label: 'Ações', type: 'icon', width: '3.5em', icons: 
+      [
+        { value: 'edit', icon: 'po-icon-edit', tooltip: 'Editar', action: this.onEdit.bind(this) },
+        { value: 'remove', icon: 'po-icon-delete', tooltip: 'Remover', color: 'color-07', action: this.onRemove.bind(this) }
+      ]
+    }
   ];
   //#endregion
 
@@ -163,14 +164,17 @@ export class #[Table.module]#ListComponent implements OnInit {
 
   onRemove(item:#[Table.module]#) {
     this.dialogService.confirm({
-      title: 'Confirmar exclusão',
-      message: 'Deseja confirmar a exclusão deste registro?',
+      title: 'Remover',
+      message: 'Deseja confirmar a remoção deste registro?',
       confirm: () => {
+        this.gpsPageList.showLoading('Removendo...');
         this.service.remove(#[inlineFields,isKey=true]#item.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
           .then(result => {                
-            this.notificationService.success('Registro excluído com sucesso!');
+            this.gpsPageList.hideLoading();
+            this.notificationService.success('Registro removido com sucesso!');
             this.resetSearch();                
-          });
+          })
+          .catch(() => this.gpsPageList.hideLoading());
       }
     });
   }
@@ -191,6 +195,7 @@ export class #[Table.module]#ListComponent implements OnInit {
   //#region Metodos de montagem dos dados
   private extend#[Table.module]#(item:#[Table.module]#): #[Table.module]#Extended {
     let result = new #[Table.module]#Extended().parseJsonToObject(item);
+    result.$actions = ['edit','remove'];
     #[whileFields,!enumComponent=]#
     result.$#[Field.name]#Description = #[Field.enumComponent,ModuleName]#Enum.getDescription(result.#[Field.name]#);
     #[endWhileFields]#

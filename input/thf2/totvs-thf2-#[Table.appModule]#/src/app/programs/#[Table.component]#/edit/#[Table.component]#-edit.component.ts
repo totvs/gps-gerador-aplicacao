@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PoNotificationService } from '@portinari/portinari-ui';
+import { GpsPageEditComponent } from 'totvs-gps-controls';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
 #[whileFields,!enumComponent=]#
@@ -16,14 +17,12 @@ import { #[Field.zoomComponent,ModuleName]#Zoom } from '../zoom/#[Field.zoomComp
 })
 export class #[Table.module]#EditComponent implements OnInit {
 
+  @ViewChild('gpsPageEdit', {static:true}) gpsPageEdit: GpsPageEditComponent;
+
   data:#[Table.module]#;
 #[whileFields,!enumComponent=]#
   #[Field.enumComponent,ControllerName]#Options = [...#[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,ModuleName]#];
 #[endWhileFields]#
-  loadingStatus = {
-    active: false,
-    message: '',
-  };
 
   private isNew:boolean = true;
 
@@ -39,7 +38,23 @@ export class #[Table.module]#EditComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
-        this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#).then(#[Table.controller]# => { this.setData(#[Table.controller]#) });
+        if (Object.keys(params).length == 0) {
+          this.isNew = true;
+          this.data = new #[Table.module]#();
+          #[whileFields,!defaultValue=]#
+          this.data.#[Field.name]# = #[Field.defaultValue]#;
+          #[endWhileFields]#
+        }
+        else {
+          this.gpsPageEdit.showLoading('Carregando');
+          this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
+            .then(#[Table.controller]# => { 
+              this.gpsPageEdit.hideLoading();
+              this.isNew = false;
+              this.setData(#[Table.controller]#);
+            })
+            .catch(() => this.back());
+        }
       }
     );
   }
@@ -48,12 +63,12 @@ export class #[Table.module]#EditComponent implements OnInit {
     this.router.navigate(['']);
   }
 
-  cancel() {
+  onCancel() {
     this.back();
   }
 
-  save() {
-    this.showLoading('Salvando dados...');
+  onSave() {
+    this.gpsPageEdit.showLoading('Salvando dados...');
     let _promise: Promise<#[Table.module]#>;
     if (this.isNew)
       _promise = this.service.insert(this.data).then(value => { this.notificationService.success('Registro cadastrado com sucesso!'); return value; });
@@ -61,25 +76,14 @@ export class #[Table.module]#EditComponent implements OnInit {
       _promise = this.service.update(this.data).then(value => { this.notificationService.success('Registro alterado com sucesso!'); return value; });
     _promise
       .then(result => {
-        this.hideLoading();
+        this.gpsPageEdit.hideLoading();
         this.back();
       })
-      .catch(error => {
-        this.hideLoading();
-      });
+      .catch(() => this.gpsPageEdit.hideLoading());
   }
 
   setData(value){    
     this.data = value;
   }
-  
-  private showLoading(message?:string) {
-    this.loadingStatus.message = (message || '');
-    this.loadingStatus.active = true;
-  }
 
-  private hideLoading() {
-    this.loadingStatus.active = false;
-    this.loadingStatus.message = '';
-  }
 }

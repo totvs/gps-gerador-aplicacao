@@ -1,14 +1,18 @@
-<po-page-detail
-    t-title="Detalhes do #[Table.description]#">
+<gps-page-detail 
+    #gpsPageDetail
+    p-title="Detalhes do #[Table.description]#"
+    (p-back)="onBack()"
+    (p-edit)="onEdit()"
+    (p-remove)="onRemove()">
     <ng-container *ngIf="data">
         <div class="po-row">
         #[whileFields]#
             <po-info
                 class="po-md-6"
-                t-label="#[Field.description]#"        
-                [t-value]="data.#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]##[IF,databaseType=date|zoomComponent=|enumComponent=]# | date:'dd/MM/yyyy'#[endIF]##[IF,databaseType=logical|zoomComponent=|enumComponent=]# | booleanFormat#[endIF]#">
+                p-label="#[Field.description]#"        
+                [p-value]="data.#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]##[IF,databaseType=date|zoomComponent=|enumComponent=]# | date:'dd/MM/yyyy'#[endIF]##[IF,databaseType=logical|zoomComponent=|enumComponent=]# | boolean#[endIF]#">
             </po-info>
         #[endWhileFields]#
         </div>
     </ng-container>
-</po-page-detail>
+</gps-page-detail>

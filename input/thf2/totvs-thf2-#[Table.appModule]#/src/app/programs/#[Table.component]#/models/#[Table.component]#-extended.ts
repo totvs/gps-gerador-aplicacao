@@ -5,6 +5,8 @@ import { #[Field.zoomComponent,ModuleName]# } from '../models/#[Field.zoomCompon
 #[endWhileFields]#
 
 export class #[Table.module]#Extended extends #[Table.module]# {
+
+    $actions:string[];
  
     #[whileFields,!zoomComponent=]#
     $#[Field.name]#:#[Field.zoomComponent,ModuleName]#;
@@ -19,8 +21,8 @@ export class #[Table.module]#Extended extends #[Table.module]# {
             return '';
         return this.$#[Field.name]#.#[Field.zoomComponent,ZoomLabelField]#;
     }
-    #[endWhileFields]#
 
+    #[endWhileFields]#
     parseJsonToObject(jsonData): #[Table.module]#Extended {
         super.parseJsonToObject(jsonData);
         return this;

@@ -5,7 +5,7 @@
         p-label="#[Field.description]#"
         p-required="#[Field.isRequired]#"
         [p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
-        [(ngModel)]="#[Table.controller]#.#[Field.name]#"
+        [(ngModel)]="data.#[Field.name]#"
         [p-columns]="#[Field.zoomComponent,controllerName]#Zoom.COLUMNS"
         [p-filter-service]="#[Field.zoomComponent,controllerName]#Zoom"
         [p-field-label]="#[Field.zoomComponent,controllerName]#Zoom.FIELD_LABEL"

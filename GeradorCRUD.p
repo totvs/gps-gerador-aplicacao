@@ -10,7 +10,7 @@ define variable nmDiretorioIncludes as character    no-undo.
 define variable nmDiretorioInput    as character    no-undo.
 define variable nmDiretorioOutput   as character    no-undo.
 
-define variable nmDatabase          as character    initial "srcadger" view-as combo-box list-items "Selecione" size 16 by 1 no-undo.
+define variable nmDatabase          as character    initial "shsrcadger" format "x(16)" view-as combo-box list-items "Selecione" size 16 by 1 no-undo.
 define variable inTipoExecucao      as integer      no-undo.
 define variable nmArquivoDados      as character    no-undo.
 
@@ -71,7 +71,7 @@ do on error undo,retry:
         update nmDatabase go-on("return").
         
         /* Atribui /bin no PROPATH */
-        run adiciona-propath(input nmDiretorioLocal + "/bin").
+        run adiciona-propath(input nmDiretorioLocal).
     
         /* Conecta no banco de dados */
         run conecta-banco(input nmDatabase).
@@ -84,11 +84,12 @@ do on error undo,retry:
             then do:
                 hide all no-pause.
                 
-                run newCRUD.p(input nmDiretorioLocal,
-                              input nmDiretorioSaves,
-                              input nmDiretorioIncludes,
-                              input nmDiretorioInput,
-                              input nmDiretorioOutput) no-error.
+                run bin/newCRUD.p (
+                    input nmDiretorioLocal,
+                    input nmDiretorioSaves,
+                    input nmDiretorioIncludes,
+                    input nmDiretorioInput,
+                    input nmDiretorioOutput) no-error.
             end.
             else if inTipoExecucao = 2
             then repeat on error undo,retry on endkey undo,leave with frame f-tipo-execucao:
@@ -101,12 +102,13 @@ do on error undo,retry:
                     undo,retry.
                 end.
                 
-                run rebuildCRUD.p(input nmDiretorioLocal,
-                                  input nmDiretorioSaves,
-                                  input nmDiretorioIncludes,
-                                  input nmDiretorioInput,
-                                  input nmDiretorioOutput,
-                                  input nmArquivoDados) no-error.
+                run bin/rebuildCRUD.p (
+                    input nmDiretorioLocal,
+                    input nmDiretorioSaves,
+                    input nmDiretorioIncludes,
+                    input nmDiretorioInput,
+                    input nmDiretorioOutput,
+                    input nmArquivoDados) no-error.
                          
                 if error-status:error
                 then message "Ocorreu um erro ao tentar gerar o CRUD"

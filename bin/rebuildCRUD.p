@@ -1,4 +1,4 @@
-{generateCRUD.i}
+{bin/generateCRUD.i}
 
 define input parameter nmDiretorioLocal    as character    no-undo.
 define input parameter nmDiretorioSaves    as character    no-undo.
@@ -22,17 +22,18 @@ if not available tmpTable
 then return.
 
 
-run generateCRUD.p(input nmDiretorioLocal,
-                   input nmDiretorioSaves,
-                   input nmDiretorioIncludes,
-                   input nmDiretorioInput,
-                   input nmDiretorioOutput,
-                   input table tmpTable,
-                   input table tmpField,
-                   input table tmpEnum,
-                   input table tmpEnumItem,
-                   input table tmpZoom,
-                   input table tmpZoomItem) no-error.
+run bin/generateCRUD.p(
+    input nmDiretorioLocal,
+    input nmDiretorioSaves,
+    input nmDiretorioIncludes,
+    input nmDiretorioInput,
+    input nmDiretorioOutput,
+    input table tmpTable,
+    input table tmpField,
+    input table tmpEnum,
+    input table tmpEnumItem,
+    input table tmpZoom,
+    input table tmpZoomItem) no-error.
 
 procedure leDadosTable:
     
