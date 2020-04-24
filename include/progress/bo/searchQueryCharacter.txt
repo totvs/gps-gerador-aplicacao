@@ -1,1 +1,0 @@
-assign ds-query-aux = appendQueryOR("#[Field.fieldName]# begins '" + replace(searchQuery, "'", "") + "'", ds-query-aux, lg-primeira-condicao-aux).

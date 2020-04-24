@@ -1,0 +1,14 @@
+<po-select
+	name="filter#[Field.name]#Initial"
+	class="po-md-6"
+	p-label="#[Field.description]# Inicial"
+	[p-options]="#[Field.enumComponent,ControllerName]#Options"
+	[(ngModel)]="filter.#[Field.name]#Initial">
+</po-select>
+<po-select
+	name=filter"#[Field.name]#Final"
+	class="po-md-6"
+	p-label="#[Field.description]# Final"
+	[p-options]="#[Field.enumComponent,ControllerName]#Options"
+	[(ngModel)]="filter.#[Field.name]#Final">
+</po-select>

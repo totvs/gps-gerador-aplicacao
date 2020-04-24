@@ -1,4 +1,4 @@
-{generateCRUD.i}
+{bin/generateCRUD.i}
 
 define input parameter nmDiretorioLocal    as character    no-undo.
 define input parameter nmDiretorioSaves    as character    no-undo.
@@ -234,17 +234,18 @@ on f1 of brw-campos do:
         run gravaDadosEnum(input nmArquivoDados).
         run gravaDadosZoom(input nmArquivoDados).
 
-        run generateCRUD.p(input nmDiretorioLocal,
-                           input nmDiretorioSaves,
-                           input nmDiretorioIncludes,
-                           input nmDiretorioInput,
-                           input nmDiretorioOutput,
-                           input table tmpTable,
-                           input table tmpField,
-                           input table tmpEnum,
-                           input table tmpEnumItem,
-                           input table tmpZoom,
-                           input table tmpZoomItem) no-error.
+        run bin/generateCRUD.p(
+            input nmDiretorioLocal,
+            input nmDiretorioSaves,
+            input nmDiretorioIncludes,
+            input nmDiretorioInput,
+            input nmDiretorioOutput,
+            input table tmpTable,
+            input table tmpField,
+            input table tmpEnum,
+            input table tmpEnumItem,
+            input table tmpZoom,
+            input table tmpZoomItem) no-error.
                            
         if error-status:error
         then do:

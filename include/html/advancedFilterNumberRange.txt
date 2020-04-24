@@ -1,0 +1,12 @@
+<po-number
+	name="filter#[Field.name]#Initial"
+	class="po-md-6"
+	p-label="#[Field.description]# Inicial"
+	[(ngModel)]="filter.#[Field.name]#Initial">
+</po-number>
+<po-number
+	name="filter#[Field.name]#Final"
+	class="po-md-6"
+	p-label="#[Field.description]# Final"
+	[(ngModel)]="filter.#[Field.name]#Final">
+</po-number>

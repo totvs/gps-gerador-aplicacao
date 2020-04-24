@@ -1,11 +1,10 @@
-<div class="thf-row">    
-	<thf-number
-	  name="#[Field.name]#"
-	  class="thf-md-2"
-	  t-label="#[Field.description]#"
-	  t-required="#[Field.isRequired]#"
-	  [t-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
-	  [(ngModel)]="#[Table.controller]#.#[Field.name]#"
-	  ngDefaultControl>
-	</thf-number>
+<div class="po-row">    
+	<po-number
+		name="#[Field.name]#"
+		class="po-md-2"
+		p-label="#[Field.description]#"
+		p-required="#[Field.isRequired]#"
+		[p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
+		[(ngModel)]="data.#[Field.name]#">
+	</po-number>
 </div>

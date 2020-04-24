@@ -1,2 +1,0 @@
-if lg-value-integer-aux
-then assign ds-query-aux = appendQueryOR("#[Field.fieldName]# = " + string(in-search-value-aux), ds-query-aux, lg-primeira-condicao-aux).

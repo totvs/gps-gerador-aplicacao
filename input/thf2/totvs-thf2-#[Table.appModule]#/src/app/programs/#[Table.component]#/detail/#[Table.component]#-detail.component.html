@@ -1,13 +1,18 @@
-<thf-page-detail
-    t-title="Detalhes do #[Table.description]#">
-    #[whileFields]#
-	#[IF,isOdd]#<div class="thf-row">#[endIF]#
-    <thf-info
-        class="thf-md-4"
-        t-label="#[Field.description]#"        
-        [t-value]="#[Table.controller]#.#[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]##[IF,databaseType=date|zoomComponent=|enumComponent=]# | dateFormat#[endIF]##[IF,databaseType=logical|zoomComponent=|enumComponent=]# | booleanFormat#[endIF]#"
-        >
-    </thf-info>
-	#[IF,isEven]#</div>#[endIF]##[IF,!isEven|isLast]#</div>#[endIF]##[IF,isEven|!isLast]#<br />#[endIF]#
-    #[endWhileFields]#
-</thf-page-detail>
+<gps-page-detail 
+    #gpsPageDetail
+    p-title="Detalhes do #[Table.description]#"
+    (p-back)="onBack()"
+    (p-edit)="onEdit()"
+    (p-remove)="onRemove()">
+    <ng-container *ngIf="data">
+        <div class="po-row">
+        #[whileFields]#
+            <po-info
+                class="po-md-6"
+                p-label="#[Field.description]#"        
+                [p-value]="data.#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]##[IF,databaseType=date|zoomComponent=|enumComponent=]# | date:'dd/MM/yyyy'#[endIF]##[IF,databaseType=logical|zoomComponent=|enumComponent=]# | boolean#[endIF]#">
+            </po-info>
+        #[endWhileFields]#
+        </div>
+    </ng-container>
+</gps-page-detail>

@@ -1,0 +1,2 @@
+{ label: '#[Field.description]#', property: '#[Field.name]#Initial'#[IF,databaseType=date]#, type: 'date'#[endIF]#, group: '#[Field.name]#', value: (v) => { return `de ${v}` } },
+{ label: '#[Field.description]#', property: '#[Field.name]#Final'#[IF,databaseType=date]#, type: 'date'#[endIF]#, group: '#[Field.name]#', separator: ' ', value: (v) => { return `até ${v}` } },

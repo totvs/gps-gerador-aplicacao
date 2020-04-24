@@ -1,0 +1,7 @@
+﻿<po-select
+	name="filter#[Field.name]#"
+	class="po-md-12"
+	p-label="#[Field.description]#"
+	[p-options]="#[Field.enumComponent,ControllerName]#Options"
+	[(ngModel)]="filter.#[Field.name]#">
+</po-select>

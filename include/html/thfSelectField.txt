@@ -1,11 +1,11 @@
 <div class="po-row">
-    <po-combo
+    <po-select
         name="#[Field.name]#"
         class="po-md-4"
         p-label="#[Field.description]#"
         p-required="#[Field.isRequired]#"
         [p-disabled]="this.isNew ? false : #[Field.isEditable,Not]#"
-        [(ngModel)]=data.#[Field.name]#"
+        [(ngModel)]="data.#[Field.name]#"
         [p-options]="#[Field.enumComponent,ControllerName]#Options">
-    </po-combo>
+    </po-select>
 </div>

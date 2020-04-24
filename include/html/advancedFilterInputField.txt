@@ -1,7 +1,0 @@
-﻿<thf-input
-	name="#[Field.name]#"
-	class="thf-md-12"
-	t-label="#[Field.description]#"
-	[(ngModel)]="#[Table.controller]#AdvancedFilter.#[Field.name]#"
-	ngDefaultControl>
-</thf-input>

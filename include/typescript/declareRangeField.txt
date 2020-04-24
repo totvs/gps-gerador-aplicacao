@@ -1,2 +1,2 @@
-public #[Field.name]#Initial:#[Field.inputType]#;
-public #[Field.name]#Final:#[Field.inputType]#;
+#[Field.name]#Initial?:#[Field.inputType]#;
+#[Field.name]#Final?:#[Field.inputType]#;
