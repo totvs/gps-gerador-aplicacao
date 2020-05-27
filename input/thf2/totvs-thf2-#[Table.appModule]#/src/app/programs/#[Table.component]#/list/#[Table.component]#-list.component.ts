@@ -3,6 +3,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { isNullOrUndefined } from 'util';
 import { PoDialogService, PoNotificationService, PoPageAction, PoTableColumn, PoTableAction, PoSelectOption } from '@portinari/portinari-ui';
 import { GpsPageListComponent, IDisclaimerConfig } from 'totvs-gps-controls';
+import { GPSPageFilter, GPSPageNavigation, GpsCRUDListModel } from 'totvs-gps-crud';
+import { GPSPageListActionColumns} from 'totvs-gps-utils';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]#, I#[Table.module]#Filter } from '../models/#[Table.component]#';
 import { #[Table.module]#Extended } from '../models/#[Table.component]#-extended';
@@ -23,28 +25,9 @@ export class #[Table.module]#ListComponent implements OnInit {
 
   @ViewChild('gpsPageList', {static: true}) gpsPageList: GpsPageListComponent;
 
-  //#region Parametros de tela
-  pageDisclaimerConfig: IDisclaimerConfig[];
-  pageActions: PoPageAction[] = [
-    { label: 'Adicionar', url: '/new' }
-  ];
-  filterModel: string;
-  filter: I#[Table.module]#Filter = {};
-  listItems: #[Table.module]#[];
-  listPage: number;
-  listHasNext: boolean;
-  listColumns: PoTableColumn[] = [
-    #[whileFields,isListable=true]#    
-    { property: '#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]#', label: '#[Field.description]#' #[IF,databaseType=logical|enumComponent=]#, type: 'boolean'#[endIF]##[IF,databaseType=date|enumComponent=]#, type: 'date'#[endIF]##[IF,isLink=true]#, type: 'link', action: (value, row) => { this.onDetail(row); }#[endIF]#},
-    #[endWhileFields]#
-    { property: '$actions', label: 'Ações', type: 'icon', width: '3.5em', icons: 
-      [
-        { value: 'edit', icon: 'po-icon-edit', tooltip: 'Editar', action: this.onEdit.bind(this) },
-        { value: 'remove', icon: 'po-icon-delete', tooltip: 'Remover', color: 'color-07', action: this.onRemove.bind(this) }
-      ]
-    }
-  ];
-  //#endregion
+  private pageNavigation:GPSPageNavigation = new GPSPageNavigation();
+  private pageController:GpsCRUDListModel<#[Table.module]#> = new GpsCRUDListModel<#[Table.module]#>();
+  private pageFilter:GPSPageFilter<I#[Table.module]#Filter> = new GPSPageFilter<I#[Table.module]#Filter>();
 
   //#region Enumeradores
   #[whileFields,!enumComponent=]#
@@ -60,23 +43,19 @@ export class #[Table.module]#ListComponent implements OnInit {
     private router:Router,
     private dialogService:PoDialogService,
     private notificationService:PoNotificationService
-  ) { }
-
-  ngOnInit() {
-    this.init();
+  ) {
+    this.pageNavigation.setRouter(router);
   }
 
-  private init() {
-    let _defaults = this.defaults();
-
-    this.listItems = [];
-    this.listPage = 0;
-    this.listHasNext = false;
-    this.filter = _defaults.filter;
-    this.pageDisclaimerConfig = this.disclaimersConfig();
-
+  ngOnInit(){
+    this.initializePageController();
+    this.setListColumns();
+    this.setDisclaimerConfig();
     this.initEnums();
-    this.applyAdvancedFilter();
+  }
+
+  get filter():any{
+    return this.pageFilter.filter;
   }
 
   private initEnums() {
@@ -88,78 +67,95 @@ export class #[Table.module]#ListComponent implements OnInit {
     #[endWhileFields]#
   }
 
-  private disclaimersConfig() {
-    return <IDisclaimerConfig[]> [
+  setListColumns(){
+    this.pageController.listColumns = [
+      #[whileFields,isListable=true]#    
+      { property: '#[IF,!zoomComponent=]#$#[endIF]##[IF,!enumComponent=]#$#[endIF]##[Field.name]##[IF,!zoomComponent=]#Description#[endIF]##[IF,!enumComponent=]#Description#[endIF]#', label: '#[Field.description]#' #[IF,databaseType=logical|enumComponent=]#, type: 'boolean'#[endIF]##[IF,databaseType=date|enumComponent=]#, type: 'date'#[endIF]##[IF,isLink=true]#, type: 'link', action: (value, row) => { this.onDetail(row); }#[endIF]#},
+      #[endWhileFields]#
+      { property: '$actions', label: 'Ações', type: 'icon', width: '3.5em', icons: 
+        [
+          { value: 'edit', icon: 'po-icon-edit', tooltip: 'Editar', action: this.onEdit.bind(this) },
+          { value: 'remove', icon: 'po-icon-delete', tooltip: 'Remover', color: 'color-07', action: this.onRemove.bind(this) }
+        ]
+      }
+    ];
+  }
+
+  initializePageController(){
+    this.pageController.title = "#[Table.description]#";
+    this.pageController.advancedFilterTitle = "Filtrar busca";
+    this.pageController.tableMessage = 'Utilize os campos de filtro para pesquisar';
+  }
+
+  setDisclaimerConfig(){
+    let disclaimerConfig:IDisclaimerConfig[] = [
       { label: 'Pesquisa por', property: 'q' },
       #[whileFields,isFilter=true]#
       *[typescript/disclaimerConfigRangeField.txt,isRangeFilter=true]**[typescript/disclaimerConfigField.txt,isRangeFilter=false]*
       #[endWhileFields]#
     ];
-  }
-
-  private defaults() {
-    return {
-      filter: <I#[Table.module]#Filter>{  }
-    }
+    this.pageFilter.disclaimerConfig = disclaimerConfig;
   }
 
   //#region Pesquisa
   resetSearch() {
-    if (!isNullOrUndefined(this.filter.q))
-      this.applySimpleFilter(this.filter.q);
-    else
-      this.applyAdvancedFilter(this.filter);
+    if (!isNullOrUndefined(this.pageFilter.filter.q))
+      return this.applySimpleFilter(this.pageFilter.filter.q);
+    
+    this.applyAdvancedFilter(this.pageFilter.filter);
   }
 
   applySimpleFilter(text) {
-    if ((text || '').length > 0) {
-      this.filter = { q: text };
-      this.listPage = 1;
-      this.listHasNext = false;
-      this.listItems = [];
-      this.search();
-    }
-  }
-
-  applyAdvancedFilter(filter?) {
-    this.filter.q = null;
-    this.listPage = 1;
-    this.listHasNext = false;
-    this.listItems = [];
+    this.pageFilter.setFilterText(text);
+    this.resetPage();
     this.search();
   }
 
-  restoreAdvancedFilterDefaults() {
-    Object.keys(this.filter).forEach(k => { if(isNullOrUndefined(this.filter[k])) delete this.filter[k]});
-    let _filter = Object.assign(this.defaults().filter, this.filter);
-    Object.assign(this.filter, _filter);
+  applyAdvancedFilter(filter?) {
+    this.pageFilter.filter.q = null;
+    this.resetPage();
+    this.search();
   }
 
   private search() {
     this.gpsPageList.showLoading('Pesquisando...');
-    this.service.getByFilter(this.filter, this.listPage)
+    this.service.getByFilter(this.pageFilter)
       .then(result => { 
-        this.listItems = [...this.listItems,...result.items.map(item => this.extend#[Table.module]#(item))];
-        this.listHasNext = result.hasNext;
+        this.resultSearch(result);
         this.gpsPageList.hideLoading();
       })
       .catch(() => this.gpsPageList.hideLoading());
+  }
+
+  resultSearch(result){
+    this.pageFilter.resumeSearch(result);
+    this.setItensTable(result.items);
+    this.pageController.tableMessage = undefined; // volta a mensagem padrão da table
+  }
+
+  resetPage(){
+    this.pageController.listItems = [];
+    this.pageFilter.resetPage();
+  }
+
+  setItensTable(itens: Object[]){        
+    itens.forEach((value) => {
+        let _obj:#[Table.module]# = new #[Table.module]#();
+        Object.assign(_obj,value);
+        _obj = this.extend#[Table.module]#(_obj);
+        this.pageController.listItems.push(_obj);
+    });
   }
   //#endregion
 
   //#region Eventos
   onListShowMore() {
-    this.listPage++;
+    this.pageFilter.nextPage();
     this.search();
   }
 
   onEdit(item:#[Table.module]#) {
-    this.router.navigate([
-      'edit',
-      #[whileFields,isKey=true]#
-      item.#[Field.name]##[IF,!isLast]#,#[endIF]#
-      #[endWhileFields]#
-    ]);
+    this.pageNavigation.editRegisterPage(item);
   }
 
   onRemove(item:#[Table.module]#) {
@@ -168,7 +164,7 @@ export class #[Table.module]#ListComponent implements OnInit {
       message: 'Deseja confirmar a remoção deste registro?',
       confirm: () => {
         this.gpsPageList.showLoading('Removendo...');
-        this.service.remove(#[inlineFields,isKey=true]#item.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
+        this.service.removeByObject(item)
           .then(result => {                
             this.gpsPageList.hideLoading();
             this.notificationService.success('Registro removido com sucesso!');
@@ -180,15 +176,14 @@ export class #[Table.module]#ListComponent implements OnInit {
   }
 
   onNew() {
-    this.router.navigate(['new']);
+    this.pageNavigation.newRegisterPage();
   }
 
   onDetail(item:#[Table.module]#) {
-    this.router.navigate([
-      #[whileFields,isKey=true]#
-      item.#[Field.name]##[IF,!isLast]#,#[endIF]#
-      #[endWhileFields]#
-    ]);
+    if(item == null)
+            return;
+            
+    this.pageNavigation.detailRegisterPage(item);
   }
   //#endregion
 

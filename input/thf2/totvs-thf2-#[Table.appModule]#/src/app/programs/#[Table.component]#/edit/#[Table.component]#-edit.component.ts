@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PoNotificationService } from '@portinari/portinari-ui';
 import { GpsPageEditComponent } from 'totvs-gps-controls';
+import { GPSPageNavigation, GpsCRUDMaintenancePage } from 'totvs-gps-crud';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
 #[whileFields,!enumComponent=]#
@@ -25,6 +26,8 @@ export class #[Table.module]#EditComponent implements OnInit {
 #[endWhileFields]#
 
   private isNew:boolean = true;
+  private pageNavigation:GPSPageNavigation = new GPSPageNavigation();
+  private maintenanceController:GpsCRUDMaintenancePage<#[Table.module]#>;
 
   constructor(
     #[whileFields,!zoomComponent=]#
@@ -33,38 +36,51 @@ export class #[Table.module]#EditComponent implements OnInit {
     private service:#[Table.module]#Service,
     private activatedRoute: ActivatedRoute, 
     private router:Router,
-    private notificationService:PoNotificationService) { }
-
-  ngOnInit() {
-    this.activatedRoute.params.subscribe(
-      (params: Params) => {
-        if (Object.keys(params).length == 0) {
-          this.isNew = true;
-          this.data = new #[Table.module]#();
-          #[whileFields,!defaultValue=]#
-          this.data.#[Field.name]# = #[Field.defaultValue]#;
-          #[endWhileFields]#
-        }
-        else {
-          this.gpsPageEdit.showLoading('Carregando');
-          this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
-            .then(#[Table.controller]# => { 
-              this.gpsPageEdit.hideLoading();
-              this.isNew = false;
-              this.setData(#[Table.controller]#);
-            })
-            .catch(() => this.back());
-        }
-      }
-    );
+    private notificationService:PoNotificationService) { 
+      this.pageNavigation.setRouter(router);
+      this.maintenanceController = new GpsCRUDMaintenancePage(activatedRoute,#[Table.module]#);
   }
 
-  private back() {
-    this.router.navigate(['']);
+  ngOnInit() {
+    this.gpsPageEdit.showLoading('Carregando');
+    this.maintenanceController.getObjectFromRouteParams()
+      .then(result => {
+        this.setData(result);
+        this.initializePage();
+      });
+  }
+
+  private initializePage(){
+    if(this.data == null){
+      this.initializeAddPage();
+      this.gpsPageEdit.hideLoading();
+      return;
+    }
+    
+    this.initializeEditPage();
+  }
+
+  private initializeAddPage(){
+    this.isNew = true;
+    this.setData(new #[Table.module]#());
+  }
+
+  private initializeEditPage(){
+    this.service.getByObject(this.data)
+    .then(result => { 
+      this.gpsPageEdit.hideLoading();
+      this.isNew = false;
+      this.setData(result);
+    })
+    .catch(() => this.onBack());
+  }
+
+  private onBack() {
+    this.pageNavigation.back();
   }
 
   onCancel() {
-    this.back();
+    this.onBack();
   }
 
   onSave() {
@@ -77,13 +93,15 @@ export class #[Table.module]#EditComponent implements OnInit {
     _promise
       .then(result => {
         this.gpsPageEdit.hideLoading();
-        this.back();
+        this.onBack();
       })
       .catch(() => this.gpsPageEdit.hideLoading());
   }
 
-  setData(value){    
-    this.data = value;
+  setData(value){  
+    if(this.data == null)  
+      this.data = new #[Table.module]#();
+    Object.assign(this.data,value);
   }
 
 }

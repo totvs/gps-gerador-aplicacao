@@ -1,20 +1,20 @@
 <gps-page-list 
     #gpsPageList
-    p-title="#[Table.description]#"
-    [p-actions]="pageActions"
-    [disclaimer-config]="pageDisclaimerConfig"
-    [(filter)]="filter"
+    [p-title]="pageController.title"
+    [p-actions]="pageController.actions"
+    [disclaimer-config]="pageFilter.disclaimerConfig"
+    [(filter)]="pageFilter.filter"
     (on-search)="applySimpleFilter($event)"
     (on-advanced-search)="applyAdvancedFilter($event)"
-    (before-advanced-search)="restoreAdvancedFilterDefaults()">
+    (before-advanced-search)="pageFilter.restoreAdvancedFilterDefaults()">
     <div class="po-row">
         <po-table 
             class="po-md-12"
             p-striped
-            [p-columns]="listColumns"
-            [p-items]="listItems"
-            [p-show-more-disabled]="!listHasNext"
-            (p-show-more)="onShowMore($event)">
+            [p-columns]="pageController.listColumns"
+            [p-items]="pageController.listItems"
+            [p-show-more-disabled]="!pageFilter.listHasNext"
+            (p-show-more)="onListShowMore($event)">
         </po-table>
 
         <ng-template gps-advanced-search>

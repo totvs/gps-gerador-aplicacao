@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { PoDialogService, PoNotificationService } from '@portinari/portinari-ui';
 import { GpsPageDetailComponent } from 'totvs-gps-controls';
+import { GPSPageNavigation, GpsCRUDMaintenancePage } from 'totvs-gps-crud';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
 import { #[Table.module]#Extended } from '../models/#[Table.component]#-extended';
@@ -23,6 +24,9 @@ export class #[Table.module]#DetailComponent implements OnInit {
 
   data:#[Table.module]#Extended;
 
+  private pageNavigation:GPSPageNavigation = new GPSPageNavigation();
+  private maintenanceController:GpsCRUDMaintenancePage<#[Table.module]#>;
+
   constructor(
     #[whileFields,!zoomComponent=]#
     public #[Field.zoomComponent,ControllerName]#Zoom: #[Field.zoomComponent,ModuleName]#Zoom,
@@ -31,24 +35,27 @@ export class #[Table.module]#DetailComponent implements OnInit {
     private activatedRoute: ActivatedRoute, 
     private router:Router,
     private dialogService:PoDialogService,
-    private notificationService:PoNotificationService) { }
+    private notificationService:PoNotificationService) { 
+      this.pageNavigation.setRouter(router);
+      this.maintenanceController = new GpsCRUDMaintenancePage(activatedRoute,#[Table.module]#);
+  }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(
-      (params: Params) => {
-        this.gpsPageDetail.showLoading('Carregando');
-        this.service.get(#[inlineFields,isKey=true]#params.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
-          .then(#[Table.controller]# => { 
+    this.gpsPageDetail.showLoading('Carregando');
+    this.maintenanceController.getObjectFromRouteParams()
+      .then(result => {
+        this.setData(result);
+        this.service.getByObject(this.data)
+          .then(result => { 
             this.gpsPageDetail.hideLoading();
-            this.setData(#[Table.controller]#);
+            this.setData(result);
           })
           .catch(() => this.onBack());
-      }
-    );
+      });
   }
 
   onBack() {
-    this.router.navigate(['']);
+    this.pageNavigation.back();
   }
 
   onRemove() {
@@ -57,7 +64,7 @@ export class #[Table.module]#DetailComponent implements OnInit {
       message: 'Deseja confirmar a remoção deste registro?',
       confirm: () => {
         this.gpsPageDetail.showLoading('Removendo...');
-        this.service.remove(#[inlineFields,isKey=true]#this.data.#[Field.name]##[IF,!isLast]#,#[endIF]##[endInlineFields]#)
+        this.service.removeByObject(this.data)
           .then(result => {
             this.gpsPageDetail.hideLoading();
             this.notificationService.success('Registro removido com sucesso!');
@@ -69,12 +76,7 @@ export class #[Table.module]#DetailComponent implements OnInit {
   }
 
   onEdit() {
-    this.router.navigate([
-      'edit',
-      #[whileFields,isKey=true]#
-      this.data.#[Field.name]##[IF,!isLast]#,#[endIF]#
-      #[endWhileFields]#
-    ]);
+    this.pageNavigation.editRegisterPage(this.data);
   }
 
   setData(value){     

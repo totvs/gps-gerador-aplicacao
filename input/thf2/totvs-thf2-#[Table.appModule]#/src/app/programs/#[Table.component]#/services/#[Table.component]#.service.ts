@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TotvsGpsServices, TTalkCollection } from 'totvs-gps-services';
 import { #[Table.module]#, I#[Table.module]#Filter } from '../models/#[Table.component]#';
+import { GPSPageFilter} from 'totvs-gps-crud';
+import { isNullOrUndefined } from 'util';
+import { GPSMaintenanceUrl } from 'totvs-gps-utils';
 
 @Injectable()
 export class #[Table.module]#Service {
@@ -8,13 +11,17 @@ export class #[Table.module]#Service {
   private readonly url = '#[Table.appModule]#/#[Table.appVersion]#/#[Table.controller,Plural]#';
   private readonly urlKeys = `${this.url}#[inlineFields,isKey=true]#/{{#[Field.name]#}}#[endInlineFields]#`;
 
-  getByFilter(search:I#[Table.module]#Filter,pageNumber?:number,pageSize?:number,expand?:string[],fields?:string[]): Promise<TTalkCollection<#[Table.module]#>> {
-    return TotvsGpsServices
+  getByFilter(pageFilter?:GPSPageFilter<any>,expand?:string[],fields?:string[]): Promise<TTalkCollection<#[Table.module]#>> {
+    let request =  TotvsGpsServices
       .getInstance<#[Table.module]#>(#[Table.module]#, this.url)
-      .setQueryParams(search)
-      .setPage(pageNumber).setPageSize(pageSize).setFields(fields).setExpand(expand)
-      .getCollection();
-    }
+      .setPage(pageFilter.listPage)
+      .setPageSize(pageFilter.listSize)
+      .setFields(fields || pageFilter.fields)
+      .setExpand(expand || pageFilter.expand)
+      .setQueryParams(pageFilter.filter);
+
+    return request.getCollection();
+  }
 
   get(#[inlineFields,isKey=true]##[Field.name]#,#[endInlineFields]#expand?:string[],fields?:string[]): Promise<#[Table.module]#> {
     return TotvsGpsServices
@@ -44,4 +51,18 @@ export class #[Table.module]#Service {
       .put(#[Table.controller]#, this.urlKeys);
   }
 
+  getByObject(#[Table.controller]#:#[Table.module]#,expand?:string[],fields?:string[]): Promise<#[Table.module]#> {
+    return TotvsGpsServices
+      .getInstance<#[Table.module]#>(#[Table.module]#,GPSMaintenanceUrl.getUrl(#[Table.controller]#,this.url))
+      .setPathParams(#[Table.controller]#)
+      .setFields(fields).setExpand(expand)
+      .get();
+  }
+
+  removeByObject(#[Table.controller]#:#[Table.module]#): Promise<any> {
+    return TotvsGpsServices
+      .getInstance<#[Table.module]#>(#[Table.module]#,GPSMaintenanceUrl.getUrl(#[Table.controller]#,this.url))
+      .setPathParams(#[Table.controller]#)
+      .delete();
+  }
 }
