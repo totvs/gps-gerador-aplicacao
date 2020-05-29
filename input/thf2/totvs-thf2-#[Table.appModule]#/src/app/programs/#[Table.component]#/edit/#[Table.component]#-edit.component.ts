@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { PoNotificationService } from '@portinari/portinari-ui';
 import { GpsPageEditComponent } from 'totvs-gps-controls';
-import { GPSPageNavigation, GpsCRUDMaintenancePage } from 'totvs-gps-crud';
+import { GpsPageNavigation, GpsCRUDMaintenancePage } from 'totvs-gps-crud';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
 #[whileFields,!enumComponent=]#
@@ -26,7 +26,7 @@ export class #[Table.module]#EditComponent implements OnInit {
 #[endWhileFields]#
 
   private isNew:boolean = true;
-  private pageNavigation:GPSPageNavigation = new GPSPageNavigation();
+  private pageNavigation:GpsPageNavigation = new GpsPageNavigation();
   private maintenanceController:GpsCRUDMaintenancePage<#[Table.module]#>;
 
   constructor(

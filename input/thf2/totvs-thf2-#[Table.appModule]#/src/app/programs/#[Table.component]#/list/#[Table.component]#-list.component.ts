@@ -3,8 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { isNullOrUndefined } from 'util';
 import { PoDialogService, PoNotificationService, PoPageAction, PoTableColumn, PoTableAction, PoSelectOption } from '@portinari/portinari-ui';
 import { GpsPageListComponent, IDisclaimerConfig } from 'totvs-gps-controls';
-import { GPSPageFilter, GPSPageNavigation, GpsCRUDListModel } from 'totvs-gps-crud';
-import { GPSPageListActionColumns} from 'totvs-gps-utils';
+import { GpsPageFilter, GpsPageNavigation, GpsCRUDListModel } from 'totvs-gps-crud';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]#, I#[Table.module]#Filter } from '../models/#[Table.component]#';
 import { #[Table.module]#Extended } from '../models/#[Table.component]#-extended';
@@ -25,9 +24,9 @@ export class #[Table.module]#ListComponent implements OnInit {
 
   @ViewChild('gpsPageList', {static: true}) gpsPageList: GpsPageListComponent;
 
-  private pageNavigation:GPSPageNavigation = new GPSPageNavigation();
+  private pageNavigation:GpsPageNavigation = new GpsPageNavigation();
   private pageController:GpsCRUDListModel<#[Table.module]#> = new GpsCRUDListModel<#[Table.module]#>();
-  private pageFilter:GPSPageFilter<I#[Table.module]#Filter> = new GPSPageFilter<I#[Table.module]#Filter>();
+  private pageFilter:GpsPageFilter<I#[Table.module]#Filter> = new GpsPageFilter<I#[Table.module]#Filter>();
 
   //#region Enumeradores
   #[whileFields,!enumComponent=]#

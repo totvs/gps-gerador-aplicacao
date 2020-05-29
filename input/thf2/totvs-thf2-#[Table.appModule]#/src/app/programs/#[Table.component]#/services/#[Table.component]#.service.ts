@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TotvsGpsServices, TTalkCollection } from 'totvs-gps-services';
 import { #[Table.module]#, I#[Table.module]#Filter } from '../models/#[Table.component]#';
-import { GPSPageFilter} from 'totvs-gps-crud';
+import { GpsPageFilter} from 'totvs-gps-crud';
 import { isNullOrUndefined } from 'util';
-import { GPSMaintenanceUrl } from 'totvs-gps-utils';
+import { GpsMaintenanceUrl } from 'totvs-gps-utils';
 
 @Injectable()
 export class #[Table.module]#Service {
@@ -11,7 +11,7 @@ export class #[Table.module]#Service {
   private readonly url = '#[Table.appModule]#/#[Table.appVersion]#/#[Table.controller,Plural]#';
   private readonly urlKeys = `${this.url}#[inlineFields,isKey=true]#/{{#[Field.name]#}}#[endInlineFields]#`;
 
-  getByFilter(pageFilter?:GPSPageFilter<any>,expand?:string[],fields?:string[]): Promise<TTalkCollection<#[Table.module]#>> {
+  getByFilter(pageFilter?:GpsPageFilter<any>,expand?:string[],fields?:string[]): Promise<TTalkCollection<#[Table.module]#>> {
     let request =  TotvsGpsServices
       .getInstance<#[Table.module]#>(#[Table.module]#, this.url)
       .setPage(pageFilter.listPage)
@@ -53,16 +53,16 @@ export class #[Table.module]#Service {
 
   getByObject(#[Table.controller]#:#[Table.module]#,expand?:string[],fields?:string[]): Promise<#[Table.module]#> {
     return TotvsGpsServices
-      .getInstance<#[Table.module]#>(#[Table.module]#,GPSMaintenanceUrl.getUrl(#[Table.controller]#,this.url))
-      .setPathParams(#[Table.controller]#)
+      .getInstance<#[Table.module]#>(#[Table.module]#,GpsMaintenanceUrl.getUrl(#[Table.controller]#,this.url))
+      .setPathParams(GpsMaintenanceUrl.getPathParamsObject(#[Table.controller]#))
       .setFields(fields).setExpand(expand)
       .get();
   }
 
   removeByObject(#[Table.controller]#:#[Table.module]#): Promise<any> {
     return TotvsGpsServices
-      .getInstance<#[Table.module]#>(#[Table.module]#,GPSMaintenanceUrl.getUrl(#[Table.controller]#,this.url))
-      .setPathParams(#[Table.controller]#)
+      .getInstance<#[Table.module]#>(#[Table.module]#,GpsMaintenanceUrl.getUrl(#[Table.controller]#,this.url))
+      .setPathParams(GpsMaintenanceUrl.getPathParamsObject(#[Table.controller]#))
       .delete();
   }
 }

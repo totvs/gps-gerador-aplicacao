@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { PoDialogService, PoNotificationService } from '@portinari/portinari-ui';
 import { GpsPageDetailComponent } from 'totvs-gps-controls';
-import { GPSPageNavigation, GpsCRUDMaintenancePage } from 'totvs-gps-crud';
+import { GpsPageNavigation, GpsCRUDMaintenancePage } from 'totvs-gps-crud';
 import { #[Table.module]#Service } from '../services/#[Table.component]#.service';
 import { #[Table.module]# } from '../models/#[Table.component]#';
 import { #[Table.module]#Extended } from '../models/#[Table.component]#-extended';
@@ -24,7 +24,7 @@ export class #[Table.module]#DetailComponent implements OnInit {
 
   data:#[Table.module]#Extended;
 
-  private pageNavigation:GPSPageNavigation = new GPSPageNavigation();
+  private pageNavigation:GpsPageNavigation = new GpsPageNavigation();
   private maintenanceController:GpsCRUDMaintenancePage<#[Table.module]#>;
 
   constructor(
