@@ -24,9 +24,9 @@ export class #[Table.module]#ListComponent implements OnInit {
 
   @ViewChild('gpsPageList', {static: true}) gpsPageList: GpsPageListComponent;
 
-  private pageNavigation:GpsPageNavigation = new GpsPageNavigation();
-  private pageController:GpsCRUDListModel<#[Table.module]#> = new GpsCRUDListModel<#[Table.module]#>();
-  private pageFilter:GpsPageFilter<I#[Table.module]#Filter> = new GpsPageFilter<I#[Table.module]#Filter>();
+  pageNavigation:GpsPageNavigation = new GpsPageNavigation();
+  pageController:GpsCRUDListModel<#[Table.module]#> = new GpsCRUDListModel<#[Table.module]#>();
+  pageFilter:GpsPageFilter<I#[Table.module]#Filter> = new GpsPageFilter<I#[Table.module]#Filter>();
 
   //#region Enumeradores
   #[whileFields,!enumComponent=]#
@@ -51,6 +51,7 @@ export class #[Table.module]#ListComponent implements OnInit {
     this.setListColumns();
     this.setDisclaimerConfig();
     this.initEnums();
+    this.setActions();
   }
 
   get filter():any{
@@ -64,6 +65,12 @@ export class #[Table.module]#ListComponent implements OnInit {
       ...#[Field.enumComponent,ModuleName]#Enum.#[Field.enumComponent,ModuleName]#
     ];
     #[endWhileFields]#
+  }
+
+  private setActions() {
+    this.pageController.actions = [
+      { label:'Adicionar',  action: this.onNew.bind(this) }
+    ];
   }
 
   setListColumns(){
