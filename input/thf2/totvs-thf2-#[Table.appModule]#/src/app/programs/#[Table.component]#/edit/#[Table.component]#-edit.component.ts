@@ -85,11 +85,9 @@ export class #[Table.module]#EditComponent implements OnInit {
 
   onSave() {
     this.gpsPageEdit.showLoading('Salvando dados...');
-    let _promise: Promise<#[Table.module]#>;
-    if (this.isNew)
-      _promise = this.service.insert(this.data).then(value => { this.notificationService.success('Registro cadastrado com sucesso!'); return value; });
-    else
-      _promise = this.service.update(this.data).then(value => { this.notificationService.success('Registro alterado com sucesso!'); return value; });
+    let _promise: Promise<#[Table.module]#> = this.isNew ?
+        this.service.insert(this.data).then(value => { this.notificationService.success('Registro cadastrado com sucesso!'); return value; })
+      : this.service.update(this.data).then(value => { this.notificationService.success('Registro alterado com sucesso!'); return value; });
     _promise
       .then(result => {
         this.gpsPageEdit.hideLoading();
